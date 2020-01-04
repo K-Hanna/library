@@ -59,8 +59,7 @@ public class MFrame extends JFrame {
         int posY = height / 2 - getHeight() / 2;
         setLocation(posX, posY);
 
-        BackgroundPanel backgroundPanel = new BackgroundPanel();
-        add(backgroundPanel);
+
 
 //----------------login panel----------------
 
@@ -243,7 +242,7 @@ public class MFrame extends JFrame {
                                 repaint();
                                 revalidate();
 
-                                bookTransferPanel.getBack().addActionListener(e2 -> {
+                                bookTransferPanel.getCancel().addActionListener(e2 -> {
                                     add(librarianEntryPanel);
                                     remove(bookTransferPanel);
                                     repaint();
@@ -288,7 +287,7 @@ public class MFrame extends JFrame {
                                 repaint();
                                 revalidate();
 
-                                bookAddPanel.getReturnBtn().addActionListener(e2 -> {
+                                bookAddPanel.getCancel().addActionListener(e2 -> {
                                     add(librarianEntryPanel);
                                     remove(bookAddPanel);
                                     repaint();
@@ -303,12 +302,12 @@ public class MFrame extends JFrame {
                                 repaint();
                                 revalidate();
 
-                                authorGetPanel.getBack().addActionListener(e2 -> {
+/*                                authorGetPanel.getBack().addActionListener(e2 -> {
                                     add(librarianEntryPanel);
                                     remove(authorGetPanel);
                                     repaint();
                                     revalidate();
-                                });
+                                });*/
                             });
 
                             librarianEntryPanel.getFindBook().addActionListener(e1 -> {
@@ -327,7 +326,7 @@ public class MFrame extends JFrame {
                                     repaint();
                                     revalidate();
 
-                                    bookEditPanel.getReturnBtn().addActionListener(e3 -> {
+                                    bookEditPanel.getCancel().addActionListener(e3 -> {
                                         add(bookGetPanel);
                                         remove(bookEditPanel);
                                         repaint();
@@ -339,12 +338,12 @@ public class MFrame extends JFrame {
                                     }});
 
 
-                                bookGetPanel.getReturnBtn().addActionListener(e2 -> {
+/*                                bookGetPanel.getCan().addActionListener(e2 -> {
                                     add(librarianEntryPanel);
                                     remove(bookGetPanel);
                                     repaint();
                                     revalidate();
-                                });
+                                });*/
                             });
 
 
@@ -494,12 +493,12 @@ public class MFrame extends JFrame {
                 JOptionPane.showMessageDialog(this, "Niepoprawny numer karty");
             }
         });
-
-
-
+        
 //
 
     }
+
+
     private void addLoginKeyListener() {
         loginPanel.getLoginBtn().addKeyListener(new KeyListener() {
             @Override

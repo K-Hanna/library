@@ -6,6 +6,9 @@ public interface IUserDBService {
 
     void addUserInDB(User user);
     void deleteUserFromDB(int idCard);
+    List<User> readUsersFromDB(int idCard);
+    List<User> readUsersFromDB(String name);
+    List<User> readUsersFromDB(String firstName, String lastName);
     User readUserFromDB(int idCard);
     User readUserFromDBById(int idUser);
     List<User> getAllUsersFromDB();

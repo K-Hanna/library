@@ -63,7 +63,43 @@ public class UserDBServiceImpl implements IUserDBService {
     }
 
     @Override
+    public List<User> readUsersFromDB(int idCard) {
+
+        List<User> users = new ArrayList<>();
+        Connection connection = initializeDataBaseConnection();
+        PreparedStatement preparedStatement = null;
+        try {
+            String queryReadUser = "SELECT * FROM public.\"user\" WHERE (cardid) = (?) ";
+            preparedStatement = connection.prepareStatement(queryReadUser);
+            preparedStatement.setInt(1,idCard);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            User user = new User();
+            while (resultSet.next()){
+                user.setFirstName(resultSet.getString("firstname"));
+                user.setLastName(resultSet.getString("lastname"));
+                user.setEmail(resultSet.getString("email"));
+                user.setCardNumber(resultSet.getInt("cardid"));
+                user.setPassword(resultSet.getString("pass"));
+                user.setIdUser(resultSet.getInt("iduser"));
+                user.setPostalCode(resultSet.getString("postalcode"));
+                user.setStreetBuilding(resultSet.getString("streetbuilding"));
+                users.add(user);
+            }
+            return users;
+
+        }
+        catch (SQLException e){
+            System.err.println("Error during invoke SQL query: \n" + e.getMessage());
+            throw  new RuntimeException("Error during invoke SQL query");
+        }
+        finally {
+            closeDBResources(connection,preparedStatement);
+        }
+    }
+
+    @Override
     public User readUserFromDB(int idCard) {
+
         Connection connection = initializeDataBaseConnection();
         PreparedStatement preparedStatement = null;
         try {
@@ -83,6 +119,78 @@ public class UserDBServiceImpl implements IUserDBService {
                 user.setStreetBuilding(resultSet.getString("streetbuilding"));
             }
             return user;
+
+        }
+        catch (SQLException e){
+            System.err.println("Error during invoke SQL query: \n" + e.getMessage());
+            throw  new RuntimeException("Error during invoke SQL query");
+        }
+        finally {
+            closeDBResources(connection,preparedStatement);
+        }
+    }
+
+    @Override
+    public List<User> readUsersFromDB(String name) {
+
+        List<User> users = new ArrayList<>();
+        Connection connection = initializeDataBaseConnection();
+        PreparedStatement preparedStatement = null;
+        try {
+            String queryReadUser = "SELECT * FROM public.\"user\" WHERE firstname = ? or lastname = ? ";
+            preparedStatement = connection.prepareStatement(queryReadUser);
+            preparedStatement.setString(1,name);
+            preparedStatement.setString(2,name);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            User user = new User();
+            while (resultSet.next()){
+                user.setFirstName(resultSet.getString("firstname"));
+                user.setLastName(resultSet.getString("lastname"));
+                user.setEmail(resultSet.getString("email"));
+                user.setCardNumber(resultSet.getInt("cardid"));
+                user.setPassword(resultSet.getString("pass"));
+                user.setIdUser(resultSet.getInt("iduser"));
+                user.setPostalCode(resultSet.getString("postalcode"));
+                user.setStreetBuilding(resultSet.getString("streetbuilding"));
+                users.add(user);
+            }
+            return users;
+
+        }
+        catch (SQLException e){
+            System.err.println("Error during invoke SQL query: \n" + e.getMessage());
+            throw  new RuntimeException("Error during invoke SQL query");
+        }
+        finally {
+            closeDBResources(connection,preparedStatement);
+        }
+    }
+
+    @Override
+    public List<User> readUsersFromDB(String firstName, String lastName) {
+
+        List<User> users = new ArrayList<>();
+        Connection connection = initializeDataBaseConnection();
+        PreparedStatement preparedStatement = null;
+        try {
+            String queryReadUser = "SELECT * FROM public.\"user\" WHERE firstname = ? and lastname = ? ";
+            preparedStatement = connection.prepareStatement(queryReadUser);
+            preparedStatement.setString(1,firstName);
+            preparedStatement.setString(2,lastName);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            User user = new User();
+            while (resultSet.next()){
+                user.setFirstName(resultSet.getString("firstname"));
+                user.setLastName(resultSet.getString("lastname"));
+                user.setEmail(resultSet.getString("email"));
+                user.setCardNumber(resultSet.getInt("cardid"));
+                user.setPassword(resultSet.getString("pass"));
+                user.setIdUser(resultSet.getInt("iduser"));
+                user.setPostalCode(resultSet.getString("postalcode"));
+                user.setStreetBuilding(resultSet.getString("streetbuilding"));
+                users.add(user);
+            }
+            return users;
 
         }
         catch (SQLException e){
@@ -198,7 +306,6 @@ public class UserDBServiceImpl implements IUserDBService {
 
             while (resultSet.next()){
                 lastUserId = resultSet.getInt("iduser");
-
             }
             return lastUserId;
         }

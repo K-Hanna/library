@@ -1,8 +1,12 @@
 package gui.login;
 
+import gui.general.BackgroundLabel;
+import gui.general.BackgroundPanel;
 import gui.general.MyButton;
+import gui.general.MyLabel;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Objects;
 
 public class LoginPanel extends JPanel {
@@ -21,7 +25,8 @@ public class LoginPanel extends JPanel {
         addAllButtons();
         addAllLabels();
         createImage();
-//        setOpaque(false);
+        createBackground();
+
     }
 
     private void addAllButtons(){
@@ -81,7 +86,7 @@ public class LoginPanel extends JPanel {
     }
     private void createRegisterBtn(){
         registerBtn = new MyButton(false);
-        registerBtn.setText("załóż konto");
+        registerBtn.setText("Załóż konto");
         registerBtn.setBounds(250,340,200,30);
     }
 
@@ -98,6 +103,19 @@ public class LoginPanel extends JPanel {
 
         imageLabel.setIcon(image);
         add(imageLabel);
+    }
+
+    private void createBackground(){
+
+        MyLabel myLabel = new MyLabel();
+        myLabel.setBounds(200,20,300,400);
+
+        BackgroundLabel backgroundLabel = new BackgroundLabel();
+        backgroundLabel.setBounds(0,0,700,600);
+
+        add(myLabel);
+        add(backgroundLabel);
+
     }
 
     public void setCardNrTxt(String cardNr){this.cardNrTxt.setText(cardNr);}

@@ -16,9 +16,8 @@ public class BookAddPanel extends JPanel {
     private JTextField[] names;
     private JLabel alleyLabel, bookstandLabel, shelfLabel;
     private JComboBox alley, bookstand, shelf;
-    private MyButton confirm, returnBtn;
+    private MyButton confirm, cancel;
     private JRadioButton oneAuthor, moreAuthors;
-    private ButtonGroup buttonGroup;
     private String alertMessage;
 
     private IAuthor authorService = new AuthorService();
@@ -34,7 +33,7 @@ public class BookAddPanel extends JPanel {
         createComps();
         addComp();
         action();
-        setSeen(false);
+        setMoreSeen(false);
 
     }
 
@@ -44,72 +43,72 @@ public class BookAddPanel extends JPanel {
         titleLabel.setBounds(50, 20, 100, 30);
 
         title = new JTextArea();
-        title.setBounds(180, 20, 200, 70);
+        title.setBounds(180, 20, 200, 55);
         title.setBorder(BorderFactory.createLineBorder(Color.black));
         title.setLineWrap(true);
 
         firstNameLabel = new JLabel("Imię autora:");
-        firstNameLabel.setBounds(50, 100, 100, 30);
+        firstNameLabel.setBounds(50, 85, 100, 30);
 
         firstName = new JTextField();
-        firstName.setBounds(180, 100, 200, 30);
+        firstName.setBounds(180, 85, 200, 30);
 
         lastNameLabel = new JLabel("Nazwisko autora: ");
-        lastNameLabel.setBounds(50, 140, 120, 30);
+        lastNameLabel.setBounds(50, 125, 120, 30);
 
         lastName = new JTextField();
-        lastName.setBounds(180, 140, 200, 30);
+        lastName.setBounds(180, 125, 200, 30);
 
         publisherLabel = new JLabel("Wydawca:");
-        publisherLabel.setBounds(50, 180, 100, 30);
+        publisherLabel.setBounds(50, 165, 100, 30);
 
         publisher = new JTextField();
-        publisher.setBounds(180, 180, 200, 30);
+        publisher.setBounds(180, 165, 200, 30);
 
         genreLabel = new JLabel("Gatunek:");
-        genreLabel.setBounds(50, 220, 100, 30);
+        genreLabel.setBounds(50, 205, 100, 30);
 
         genre = new JTextField();
-        genre.setBounds(180, 220, 200, 30);
+        genre.setBounds(180, 205, 200, 30);
 
         languageLabel = new JLabel("Język:");
-        languageLabel.setBounds(50, 260, 100, 30);
+        languageLabel.setBounds(50, 245, 100, 30);
 
         language = new JTextField();
-        language.setBounds(180, 260, 200, 30);
+        language.setBounds(180, 245, 200, 30);
 
         alleyLabel = new JLabel("Alejka:");
-        alleyLabel.setBounds(50, 300, 55,30);
+        alleyLabel.setBounds(50, 285, 55,30);
 
         String[] alleys = bookshelfService.getAlleys();
         alley = new JComboBox(alleys);
-        alley.setBounds(105, 300, 55, 30);
+        alley.setBounds(105, 285, 55, 30);
 
         bookstandLabel = new JLabel("regał: ");
-        bookstandLabel.setBounds(165,300,55,30);
+        bookstandLabel.setBounds(165,285,55,30);
 
         String[] bookstands = bookshelfService.getBookstands();
         bookstand = new JComboBox(bookstands);
-        bookstand.setBounds(215,300,55,30);
+        bookstand.setBounds(215,285,55,30);
 
         shelfLabel = new JLabel("półka:");
-        shelfLabel.setBounds(275,300,55,30);
+        shelfLabel.setBounds(275,285,55,30);
 
         String[] shelves = bookshelfService.getShelves();
         shelf = new JComboBox(shelves);
-        shelf.setBounds(325,300,55,30);
+        shelf.setBounds(325,285,55,30);
 
         moreAuthorsLabel = new JLabel("Autorzy:");
-        moreAuthorsLabel.setBounds(50,340,200,30);
+        moreAuthorsLabel.setBounds(50,85,200,30);
         moreAuthorsLabel.setVisible(false);
 
-        names = new JTextField[10];
+        names = new JTextField[6];
         for (int i = 0; i < names.length; i++) {
             names[i] = new JTextField();
             if(i%2 == 0)
-                names[i].setBounds(50,380 + (30 * (i / 2)), 200,30);
+                names[i].setBounds(180,85 + (25 * (i / 2)), 200,25);
             else
-                names[i].setBounds(250,380 + (30 * (i / 2)), 200,30);
+                names[i].setBounds(380,85 + (25 * (i / 2)), 200,25);
         }
 
         oneAuthor = new JRadioButton("1 autor");
@@ -119,17 +118,17 @@ public class BookAddPanel extends JPanel {
         moreAuthors = new JRadioButton("więcej autorów");
         moreAuthors.setBounds(400,50,200,30);
 
-        buttonGroup = new ButtonGroup();
+        ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(oneAuthor);
         buttonGroup.add(moreAuthors);
 
         confirm = new MyButton(true);
         confirm.setText("Dodaj");
-        confirm.setBounds(400, 100, 200, 30);
+        confirm.setBounds(400, 245, 200, 30);
 
-        returnBtn = new MyButton(false);
-        returnBtn.setText("Cofnij");
-        returnBtn.setBounds(400, 240, 200, 30);
+        cancel = new MyButton(false);
+        cancel.setText("Anuluj");
+        cancel.setBounds(400, 285, 200, 30);
     }
 
     private void addComp() {
@@ -155,7 +154,7 @@ public class BookAddPanel extends JPanel {
         add(moreAuthors);
         add(moreAuthorsLabel);
         add(confirm);
-        add(returnBtn);
+        add(cancel);
         for (JTextField name : names) {
             add(name);
         }
@@ -197,15 +196,13 @@ public class BookAddPanel extends JPanel {
         });
 
         oneAuthor.addActionListener(e ->{
-            firstName.setEditable(true);
-            lastName.setEditable(true);
-            setSeen(false);
+            setMoreSeen(false);
+            setOneSeen(true);
         });
 
         moreAuthors.addActionListener(e ->{
-            firstName.setEditable(false);
-            lastName.setEditable(false);
-            setSeen(true);
+            setMoreSeen(true);
+            setOneSeen(false);
         });
     }
 
@@ -237,14 +234,21 @@ public class BookAddPanel extends JPanel {
                 genreCheck && languageCheck;
     }
 
-    private void setSeen(boolean seen){
+    private void setMoreSeen(boolean seen){
         moreAuthorsLabel.setVisible(seen);
         for (JTextField name : names) {
             name.setVisible(seen);
         }
     }
 
-    public MyButton getReturnBtn() {
-        return returnBtn;
+    private void setOneSeen(boolean seen){
+        firstNameLabel.setVisible(seen);
+        firstName.setVisible(seen);
+        lastNameLabel.setVisible(seen);
+        lastName.setVisible(seen);
+    }
+
+    public MyButton getCancel() {
+        return cancel;
     }
 }

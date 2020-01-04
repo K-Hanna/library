@@ -1,18 +1,21 @@
 package gui.book;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.util.List;
 
 import book.*;
 import gui.general.MyButton;
+import reader.IReaderDBService;
+import reader.ReaderDBServiceImpl;
 
 public class AuthorGetPanel extends JPanel {
 
-    private JLabel keyWordLabel, resultListLabel, result, newFirstNameLabel, newLastNameLabel;
+    private JLabel keyWordLabel, result, newFirstNameLabel, newLastNameLabel;
     private JTextField keyWord, newFirstName, newLastName;
     private JList resultList;
-    private MyButton search, remove, edit, change, back;
+    private MyButton search, remove, edit, change;
     private JScrollPane listScroller;
 
     private IAuthor authorService = new AuthorService();
@@ -27,7 +30,7 @@ public class AuthorGetPanel extends JPanel {
         actions();
     }
 
-    private void createBookJList(List<Author> authorList){
+    private void createAuthorsJList(List<Author> authorList){
 
         DefaultListModel listModel = new DefaultListModel();
         for (Author author : authorList) {
@@ -43,59 +46,53 @@ public class AuthorGetPanel extends JPanel {
     private void createComps() {
 
         keyWordLabel = new JLabel("Słowo kluczowe:");
-        keyWordLabel.setBounds(80,40,100,30);
+        keyWordLabel.setBounds(50,20,100,30);
 
         keyWord = new JTextField();
-        keyWord.setBounds(180,40,200,30);
-
-        resultListLabel = new JLabel("Wyniki wyszukiwania:");
-        resultListLabel.setBounds(80,80,200,30);
+        keyWord.setBounds(150,20,200,30);
 
         resultList = new JList();
-        resultList.setBounds(80,120,300,320);
-        resultList.setBorder(BorderFactory.createLineBorder(Color.black));
+        resultList.setBounds(50,60,300,290);
+        resultList.setBorder(new TitledBorder("Wyniki wyszukiwania:"));
 
         result = new JLabel();
-        result.setBounds(80,120,300,320);
-        result.setBorder(BorderFactory.createLineBorder(Color.black));
+        result.setBounds(50,60,300,290);
+        result.setBorder(new TitledBorder("Wyniki wyszukiwania:"));
         result.setBackground(Color.white);
         result.setOpaque(true);
         result.setVerticalAlignment(1);
 
         search = new MyButton(true);
         search.setText("Szukaj");
-        search.setBounds(400,40,200,30);
+        search.setBounds(400,20,200,30);
 
         remove = new MyButton(true);
         remove.setText("Usuń");
-        remove.setBounds(400,80,200,30);
+        remove.setBounds(400,60,200,30);
 
         edit = new MyButton(true);
         edit.setText("Edytuj");
-        edit.setBounds(400,120,200,30);
+        edit.setBounds(400,100,200,30);
 
         newFirstNameLabel = new JLabel("Nowe imię:");
-        newFirstNameLabel.setBounds(400,250,200,30);
+        newFirstNameLabel.setBounds(400,160,200,30);
 
         newFirstName = new JTextField();
-        newFirstName.setBounds(400,290,200,30);
+        newFirstName.setBounds(400,200,200,30);
         newFirstName.setEditable(false);
 
         newLastNameLabel = new JLabel("Nowe nazwisko:");
-        newLastNameLabel.setBounds(400,320,200,30);
+        newLastNameLabel.setBounds(400,240,200,30);
 
         newLastName = new JTextField();
-        newLastName.setBounds(400,370,200,30);
+        newLastName.setBounds(400,280,200,30);
         newLastName.setEditable(false);
 
-        change = new MyButton(false);
+        change = new MyButton(true);
         change.setText("Zatwierdź");
-        change.setBounds(400,410,200,30);
+        change.setBounds(400,320,200,30);
         change.setEnabled(false);
-
-        back = new MyButton(false);
-        back.setText("Cofnij");
-        back.setBounds(400,470,200,30);
+        change.setContentAreaFilled(false);
 
     }
 
@@ -111,11 +108,12 @@ public class AuthorGetPanel extends JPanel {
             }
 
             if(authorList.size() > 0) {
-                createBookJList(authorList);
+                createAuthorsJList(authorList);
                 add(resultList);
             } else {
                 result.setText("Nie ma takich autorów.");
             }
+
         });
 
         remove.addActionListener(e ->{
@@ -146,6 +144,7 @@ public class AuthorGetPanel extends JPanel {
                 newLastName.setEditable(true);
                 newLastName.setText(author.getLastName());
                 change.setEnabled(true);
+                change.setContentAreaFilled(true);
 
                 change.addActionListener(e1 ->{
                     authorService.editAuthor(author.getAuthorId(), newFirstName.getText(), newLastName.getText());
@@ -160,7 +159,6 @@ public class AuthorGetPanel extends JPanel {
 
         add(keyWordLabel);
         add(keyWord);
-        add(resultListLabel);
         add(result);
         add(search);
         add(remove);
@@ -170,11 +168,6 @@ public class AuthorGetPanel extends JPanel {
         add(newLastNameLabel);
         add(newLastName);
         add(change);
-        add(back);
-    }
-
-    public MyButton getBack() {
-        return back;
     }
 
 }

@@ -1,5 +1,7 @@
 package gui.bookTransfer;
 
+import book.BookService;
+import book.IBook;
 import bookTransfer.BookTransfer;
 import bookTransfer.BookTransferService;
 import bookTransfer.IBookTransfer;
@@ -12,6 +14,7 @@ import user.User;
 import user.UserDBServiceImpl;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.util.Date;
 import java.util.List;
@@ -21,13 +24,14 @@ public class BookTransferPanel extends JPanel {
 
     private IBookTransfer bookTransfer = new BookTransferService();
 
-    private JLabel userIdLabel, lentBooksLabel, reservedBooksLabel, lendBookLabel, returnBookLabel;
+    private JLabel userIdLabel, lentBooksLabel, reservedBooksLabel;
     private JTextField userId;
-    private MyButton showBooks, lendBook, returnBooks, back;
+    private MyButton showBooks, lendBook, returnBooks, cancel;
     private JList<BookTransfer> lentBooks, reservedBooks;
 
     private IReaderDBService readerDBService = new ReaderDBServiceImpl();
     private IUserDBService userDBService = new UserDBServiceImpl();
+    private IBook bookService = new BookService();
 
     private int readerId;
 
@@ -61,54 +65,48 @@ public class BookTransferPanel extends JPanel {
     private void createComps(){
 
         userIdLabel = new JLabel("Numer karty:");
-        userIdLabel.setBounds(50,40,100,30);
+        userIdLabel.setBounds(50,20,100,30);
 
         userId = new JTextField();
-        userId.setBounds(200,40,200, 30);
+        userId.setBounds(150,20,200, 30);
 
         showBooks = new MyButton(true);
         showBooks.setText("Pokaż");
-        showBooks.setBounds(450,40,200,30);
-
-        lendBookLabel = new JLabel("Zarezerowane książki:");
-        lendBookLabel.setBounds(50,100,200,30);
+        showBooks.setBounds(400,20,200,30);
 
         reservedBooksLabel = new JLabel();
-        reservedBooksLabel.setBounds(50,140,600,100);
-        reservedBooksLabel.setBorder(BorderFactory.createLineBorder(Color.black));
+        reservedBooksLabel.setBounds(50,60,550,100);
+        reservedBooksLabel.setBorder(new TitledBorder("Zarezerwowane książki:"));
         reservedBooksLabel.setBackground(Color.white);
         reservedBooksLabel.setOpaque(true);
         reservedBooksLabel.setVerticalAlignment(1);
 
         reservedBooks = new JList<>();
-        reservedBooks.setBounds(50,140,600,100);
-        reservedBooks.setBorder(BorderFactory.createLineBorder(Color.black));
+        reservedBooks.setBounds(50,60,550,100);
+        reservedBooks.setBorder(new TitledBorder("Zarezerwowane książki:"));
 
         lendBook = new MyButton(true);
         lendBook.setText("Wypożycz");
-        lendBook.setBounds(450,100,200,30);
-
-        returnBookLabel = new JLabel("Wypożyczone książki:");
-        returnBookLabel.setBounds(50,270,200,30);
+        lendBook.setBounds(400,170,200,30);
 
         lentBooksLabel = new JLabel();
-        lentBooksLabel.setBounds(50,310,600,100);
-        lentBooksLabel.setBorder(BorderFactory.createLineBorder(Color.black));
+        lentBooksLabel.setBounds(50,220,550,100);
+        lentBooksLabel.setBorder(new TitledBorder("Wypożyczone książki:"));
         lentBooksLabel.setBackground(Color.white);
         lentBooksLabel.setOpaque(true);
         lentBooksLabel.setVerticalAlignment(1);
 
         lentBooks = new JList<>();
-        lentBooks.setBounds(50,310,600,100);
-        lentBooks.setBorder(BorderFactory.createLineBorder(Color.black));
+        lentBooks.setBounds(50,220,550,100);
+        lentBooks.setBorder(new TitledBorder("Wypożyczone książki:"));
 
         returnBooks = new MyButton(true);
         returnBooks.setText("Przyjmij zwrot");
-        returnBooks.setBounds(450, 270, 200,30);
+        returnBooks.setBounds(400, 330, 200,30);
 
-        back = new MyButton(false);
-        back.setText("Cofnij");
-        back.setBounds(450,430,200,30);
+        cancel = new MyButton(false);
+        cancel.setText("Anuluj");
+        cancel.setBounds(400,370,200,30);
     }
 
     private void actions(){
@@ -139,8 +137,10 @@ public class BookTransferPanel extends JPanel {
 
                 if(lentUserBooks.size() >= 3){
                     lendBook.setEnabled(false);
+                    lendBook.setContentAreaFilled(false);
                 } else {
                     lendBook.setEnabled(true);
+                    lendBook.setContentAreaFilled(true);
                 }
 
                 for (BookTransfer books : reservedUserBooks) {
@@ -161,6 +161,7 @@ public class BookTransferPanel extends JPanel {
             for (BookTransfer aBook : book) {
                 bookTransfer.lendBook(readerId, aBook.getAuthorBook().getBook().getBookId());
                 bookTransfer.unReserveBook(aBook.getAuthorBook().getBook().getBookId());
+                bookService.setBookAvailability(aBook.getAuthorBook().getBook().getBookId(), false);
                 JOptionPane.showMessageDialog(this, bookTransfer.getMessage());
                 repaint();
                 revalidate();
@@ -176,6 +177,7 @@ public class BookTransferPanel extends JPanel {
 
             for (BookTransfer aBook : book) {
                 bookTransfer.acceptReturnBook(Integer.parseInt(userId.getText()), aBook.getAuthorBook().getBook().getBookId());
+                bookService.setBookAvailability(aBook.getAuthorBook().getBook().getBookId(), true);
                 JOptionPane.showMessageDialog(this, bookTransfer.getMessage());
                 repaint();
                 revalidate();
@@ -191,13 +193,11 @@ public class BookTransferPanel extends JPanel {
         add(userIdLabel);
         add(userId);
         add(showBooks);
-        add(lendBookLabel);
         add(reservedBooksLabel);
         add(lendBook);
-        add(returnBookLabel);
         add(lentBooksLabel);
         add(returnBooks);
-        add(back);
+        add(cancel);
     }
 
     private boolean check(){
@@ -211,7 +211,11 @@ public class BookTransferPanel extends JPanel {
         return isCorrect && !(userId.getText().isEmpty());
     }
 
-    public MyButton getBack() {
-        return back;
+    public JTextField getUserId() {
+        return userId;
+    }
+
+    public MyButton getCancel() {
+        return cancel;
     }
 }

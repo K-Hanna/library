@@ -1,26 +1,40 @@
 package gui.book;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import book.*;
+import bookTransfer.BookTransferService;
+import bookTransfer.IBookTransfer;
 import gui.general.MyButton;
+import reader.IReaderDBService;
+import reader.Reader;
+import reader.ReaderDBServiceImpl;
+import user.IUserDBService;
+import user.User;
+import user.UserDBServiceImpl;
 
 public class BookGetPanel extends JPanel {
 
-    private JLabel searchByLabel, keyWordLabel, resultListLabel, result;
+    private JLabel searchByLabel, keyWordLabel, result;
     private JComboBox<String> searchBy;
     private JTextField keyWord;
     private JList<AuthorBook> resultList;
-    private MyButton search, remove, edit, location, unavailable, returnBtn;
-    private JScrollPane scrollpane;
+    private MyButton search, create, remove, edit, location, unavailable, lend;
+    private JScrollPane scrollPane;
+    private String readerCard;
 
     private IBook iBook = new BookService();
     private IAuthor iAuthor = new AuthorService();
     private IAuthorBook iAuthorBook = new AuthorBookService();
-    private int bookIdToEdit, authorIdToEdit;
+    private IReaderDBService readerDBService = new ReaderDBServiceImpl();
+    private IBookTransfer bookTransfer = new BookTransferService();
+    private IUserDBService userDBService = new UserDBServiceImpl();
+    private IBook bookService = new BookService();
 
     public BookGetPanel() {
 
@@ -38,14 +52,22 @@ public class BookGetPanel extends JPanel {
         for (AuthorBook aBookList : bookList) {
             listModel.addElement(aBookList);
         }
+
         resultList.setModel(listModel);
-        resultList.setLayoutOrientation(JList.VERTICAL);
+        resultList.setVisibleRowCount(10);
+        resultList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        scrollPane = new JScrollPane(resultList);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+//        scrollPane.setPreferredSize(new Dimension(550,290));
+
+        add(scrollPane);
 
     }
 
     private void createScroll(){
 
-        scrollpane = new JScrollPane(resultListLabel);
+        JScrollPane scrollpane = new JScrollPane(resultList);
         scrollpane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollpane.setPreferredSize(new Dimension(100,50));
         scrollpane.setBounds(20,140,580,320);
@@ -57,54 +79,56 @@ public class BookGetPanel extends JPanel {
     private void createComps() {
 
         searchByLabel = new JLabel("Wyszukaj po:");
-        searchByLabel.setBounds(50,40,100,30);
+        searchByLabel.setBounds(20,20,100,30);
 
         searchBy = new JComboBox<>(new String[]{"tytule", "autorze (imię, nazwisko)", "wydawcy", "gatunku", "języku"});
-        searchBy.setBounds(180,40,200,30);
+        searchBy.setBounds(140,20,200,30);
 
         keyWordLabel = new JLabel("Słowo kluczowe:");
-        keyWordLabel.setBounds(50,80,100,30);
+        keyWordLabel.setBounds(20,60,100,30);
 
         keyWord = new JTextField();
-        keyWord.setBounds(180,80,200,30);
-
-        resultListLabel = new JLabel("Wyniki wyszukiwania:");
-        resultListLabel.setBounds(50,120,200,30);
+        keyWord.setBounds(140,60,200,30);
 
         resultList = new JList<>();
-        resultList.setBounds(50,160,600,320);
-        resultList.setBorder(BorderFactory.createLineBorder(Color.black));
+        resultList.setBounds(20,100,600,240);
+        resultList.setBorder(new TitledBorder("Wyniki wyszukiwania:"));
 
         result = new JLabel();
-        result.setBounds(50,160,600,320);
-        result.setBorder(BorderFactory.createLineBorder(Color.black));
+        result.setBounds(20,100,600,240);
+        result.setBorder(new TitledBorder("Wyniki wyszukiwania:"));
         result.setBackground(Color.white);
         result.setOpaque(true);
         result.setVerticalAlignment(1);
 
         search = new MyButton(true);
-        search.setText("Szukaj");
-        search.setBounds(450,40,200,30);
+        search.setText("Szukaj książki");
+        search.setBounds(350,20,130,30);
+
+        create = new MyButton(true);
+        create.setText("Dodaj książkę");
+        create.setBounds(350, 60,130,30);
 
         remove = new MyButton(true);
-        remove.setText("Usuń");
-        remove.setBounds(250,490,200,30);
+        remove.setText("Usuń książkę");
+        remove.setBounds(20,350,150,30);
 
         edit = new MyButton(true);
-        edit.setText("Edytuj");
-        edit.setBounds(50,490,200,30);
+        edit.setText("Edytuj książkę");
+        edit.setBounds(180,350,150,30);
 
         location = new MyButton(true);
-        location.setText("Pokaż bez lokalizacji");
-        location.setBounds(450, 80,200,30);
+        location.setText("Bez lokalizacji");
+        location.setBounds(490, 20,130,30);
 
         unavailable = new MyButton(true);
-        unavailable.setText("Pokaż niedostępne");
-        unavailable.setBounds(450, 120, 200,30);
+        unavailable.setText("Niedostępne");
+        unavailable.setBounds(490, 60, 130,30);
 
-        returnBtn = new MyButton(false);
-        returnBtn.setText("Anuluj");
-        returnBtn.setBounds(450,490,200,30);
+        lend = new MyButton(true);
+        lend.setText("Wypożycz książkę");
+        lend.setBounds(340,350,150,30);
+
     }
 
     private void actions(){
@@ -122,7 +146,7 @@ public class BookGetPanel extends JPanel {
                     int authorId = iAuthor.getAuthorId(firstName, lastName);
                     bookList = iAuthorBook.getBooksOfAuthor(authorId, 1);
                 } else {
-                    JOptionPane.showMessageDialog(this, "Nieprawidlowy format");
+                    JOptionPane.showMessageDialog(this, "Nieprawidłowy format.");
                 }
             } else if(searchBy.getSelectedIndex() == 0) {
                 bookList = iAuthorBook.getBooksByTitle(keyWord.getText(), 1);
@@ -179,6 +203,44 @@ public class BookGetPanel extends JPanel {
                 result.setText("Nie ma takich książek.");
             }
         });
+
+        lend.addActionListener(e -> {
+
+            AuthorBook book = resultList.getSelectedValue();
+
+            if(book== null) {
+                JOptionPane.showMessageDialog(this, "Żadna książka nie została wybrana.");
+            } else {
+                List<Integer> readerCards = readerDBService.getReadersCards();
+
+                readerCard = JOptionPane.showInputDialog(this, "Podaj numer karty czytelnika:");
+
+                if(check()){
+                    int cardId = Integer.parseInt(readerCard);
+                    boolean present = false;
+
+                    for (Integer card : readerCards) {
+                        if (cardId == card) {
+                            present = true;
+                            break;
+                        }
+                    }
+
+                    User user = userDBService.readUserFromDB(cardId);
+                    Reader reader = readerDBService.readReaderFromDB(user.getIdUser());
+                    int readerId = reader.getIdReader();
+
+                    if (!present) {
+                        JOptionPane.showMessageDialog(this, "Nie ma takiej karty.");
+                    } else {
+                        bookTransfer.lendBook(readerId, book.getBook().getBookId());
+                        bookService.setBookAvailability(book.getBook().getBookId(), false);
+
+                        JOptionPane.showMessageDialog(this, bookTransfer.getMessage());
+                    }
+                }
+            }
+        });
     }
 
     private void addComps(){
@@ -187,28 +249,35 @@ public class BookGetPanel extends JPanel {
         add(searchBy);
         add(keyWordLabel);
         add(keyWord);
-        add(resultListLabel);
         add(result);
         add(search);
+        add(create);
         add(remove);
         add(edit);
         add(location);
         add(unavailable);
-        add(returnBtn);
-//        add(scrollpane);
-    }
-
-    public MyButton getReturnBtn() {
-        return returnBtn;
+        add(lend);
     }
 
     public MyButton getEdit() {
         return edit;
     }
 
+    public MyButton getCreate() {return  create;}
+
+    private boolean check(){
+
+        boolean isCorrect = Pattern.matches("[0-9]+", readerCard);
+
+        if(!isCorrect)
+            JOptionPane.showMessageDialog(this, "Nieprawidłowe ID.");
+
+        return isCorrect;
+    }
+
     int getBookIdToEdit() {
 
-        bookIdToEdit = 0;
+        int bookIdToEdit = 0;
 
         AuthorBook authorBook = resultList.getSelectedValue();
         if(authorBook != null){
@@ -220,7 +289,7 @@ public class BookGetPanel extends JPanel {
 
     int getAuthorIdToEdit(){
 
-        authorIdToEdit = 0;
+        int authorIdToEdit = 0;
 
         AuthorBook authorBook = resultList.getSelectedValue();
         if(authorBook != null) {

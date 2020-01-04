@@ -6,7 +6,9 @@ import card.ICardDBService;
 import city.CityDBServiceImpl;
 import city.ICityDBService;
 import config.Validation;
+import gui.general.BackgroundLabel;
 import gui.general.MyButton;
+import gui.general.MyLabel;
 import reader.IReaderDBService;
 import reader.ReaderDBServiceImpl;
 import user.IUserDBService;
@@ -46,6 +48,7 @@ public class ReaderAddPanel  extends JPanel {
         add(addReaderBtn);
         setPostalCodeKL();
         actionAddReaderBtn();
+        createBackground();
     }
     private void setPostalCodeKL() {
         postalCodeTxt.addKeyListener(new KeyListener() {
@@ -271,6 +274,19 @@ public class ReaderAddPanel  extends JPanel {
     private void createNotRobot(){
         notRobot = new JCheckBox("Nie jestem robotem");
         notRobot.setBounds(300, 340, 150, 30);
+    }
+
+    private void createBackground(){
+
+        MyLabel myLabel = new MyLabel();
+        myLabel.setBounds(150,20,400,450);
+
+        BackgroundLabel backgroundLabel = new BackgroundLabel();
+        backgroundLabel.setBounds(0,0,700,600);
+
+        add(myLabel);
+        add(backgroundLabel);
+
     }
 
     private boolean check(){

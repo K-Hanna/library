@@ -114,6 +114,35 @@ public class ReaderDBServiceImpl implements IReaderDBService {
         }
     }
 
+    @Override
+    public List<Integer> getReadersCards() {
+
+        Connection connection = initializeDataBaseConnection();
+        PreparedStatement preparedStatement = null;
+
+        List<Integer> listOfCards = new ArrayList<>();
+
+        String SQL = "select distinct cardid from reader;";
+
+        try  {
+            preparedStatement = connection.prepareStatement(SQL);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                int cards = rs.getInt("cardid");
+                listOfCards.add(cards);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error during invoke SQL query: \n" + e.getMessage());
+            throw  new RuntimeException("Error during invoke SQL query");
+        }
+        finally {
+            closeDBResources(connection,preparedStatement);
+        }
+
+        return listOfCards;
+    }
+
 
     @Override
     public void chooseBook() {

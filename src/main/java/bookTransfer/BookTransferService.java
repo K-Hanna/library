@@ -143,8 +143,6 @@ public class BookTransferService implements IBookTransfer {
         finally {
             closeDBResources(connection,preparedStatement);
         }
-
-        bookService.setBookAvailability(bookId, false);
     }
 
     @Override
@@ -196,8 +194,6 @@ public class BookTransferService implements IBookTransfer {
         finally {
             closeDBResources(connection,preparedStatement);
         }
-
-        bookService.setBookAvailability(bookId, true);
     }
 
     @Override
@@ -220,8 +216,6 @@ public class BookTransferService implements IBookTransfer {
         finally {
             closeDBResources(connection,preparedStatement);
         }
-
-        bookService.setBookAvailability(bookId, true);
     }
 
     @Override

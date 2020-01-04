@@ -12,6 +12,8 @@ import javax.swing.border.LineBorder;
 public class Test {
 
     public static void main(String args[]) {
+
+
         JFrame frame = new JFrame("Tabbed Pane Sample");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
