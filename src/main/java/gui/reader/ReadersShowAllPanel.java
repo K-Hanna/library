@@ -1,33 +1,33 @@
 package gui.reader;
 
-import book.*;
 import card.CardDBServiceImpl;
 import card.ICardDBService;
 import city.CityDBServiceImpl;
 import city.ICityDBService;
 import gui.general.MyButton;
 import reader.IReaderDBService;
-import reader.Reader;
 import reader.ReaderDBServiceImpl;
+import reader.Reader;
+import user.IUserDBService;
+import user.User;
+import user.UserDBServiceImpl;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class ReadersShowAllPanel extends JPanel {
-
-    private JList<Reader> ReaderJList;
 
     private JLabel keyWordLabel, result;
     private JTextField keyWord;
     private JList resultList;
-    private MyButton search, remove, edit;
-    private JScrollPane listScroller;
+    private MyButton search, remove, showBooks;
+    private JScrollPane scrollPane;
 
     private IReaderDBService readerDBService = new ReaderDBServiceImpl();
-    private ICardDBService cardDBService = new CardDBServiceImpl();
-    private ICityDBService cityDBService = new CityDBServiceImpl();
+    private IUserDBService userDBService = new UserDBServiceImpl();
 
     public ReadersShowAllPanel(){
 
@@ -38,19 +38,16 @@ public class ReadersShowAllPanel extends JPanel {
         actions();
     }
 
-    private void createReaderList(List<Reader> ReaderList){
+    private void createReaderList(List<User> readerList){
 
         DefaultListModel listModel = new DefaultListModel();
-        for (int i = 0; i < ReaderList.size(); i++)
+        for (int i = 0; i < readerList.size(); i++)
         {
-            listModel.addElement(ReaderList.get(i));
+            listModel.addElement(readerList.get(i));
         }
 
         resultList.setModel(listModel);
         resultList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listScroller = new JScrollPane(resultList);
-        listScroller.setPreferredSize(new Dimension(250, 80));
-
     }
 
     private void createComps() {
@@ -63,7 +60,11 @@ public class ReadersShowAllPanel extends JPanel {
 
         resultList = new JList();
         resultList.setBounds(50,60,300,290);
-        resultList.setBorder(new TitledBorder("Wyniki wyszukiwania:"));
+
+        scrollPane = new JScrollPane(resultList);
+        scrollPane.setBounds(50,60,300,290);
+        scrollPane.setBorder(new TitledBorder("Wyniki wyszukiwania:"));
+        scrollPane.setBackground(Color.white);
 
         result = new JLabel();
         result.setBounds(50,60,300,290);
@@ -80,42 +81,50 @@ public class ReadersShowAllPanel extends JPanel {
         remove.setText("Usuń");
         remove.setBounds(400,60,200,30);
 
-        edit = new MyButton(true);
-        edit.setText("Edytuj");
-        edit.setBounds(400,100,200,30);
+        showBooks = new MyButton(true);
+        showBooks.setText("Pokaż książki czytelnika");
+        showBooks.setBounds(400,100,200,30);
 
     }
 
     private void actions(){
 
         search.addActionListener(e -> {
-            List<Reader> ReaderList;
+            List<User> readerList;
 
-//            if(keyWord.getText().length() == 0)
-            ReaderList = readerDBService.getAllReadersFromDB();
-//            else {
-//                authorList = authorService.getAuthors(keyWord.getText());
-//            }
-
-            if(ReaderList.size() > 0) {
-                createReaderList(ReaderList);
-                add(resultList);
+            if(keyWord.getText().length() == 0) {
+                readerList = readerDBService.readReadersFromDB();
+            } else if(check()){
+                readerList = readerDBService.readReadersFromDB(Integer.parseInt(keyWord.getText()));
+            } else if(keyWord.getText().contains(" ")) {
+                int coma = keyWord.getText().indexOf(" ");
+                String firstName = keyWord.getText().substring(0, coma);
+                String lastName = keyWord.getText().substring(coma + 1);
+                readerList = readerDBService.readReadersFromDB(firstName, lastName);
             } else {
-                result.setText("Nie ma takich czytelników.");
+                readerList = readerDBService.readReadersFromDB(keyWord.getText());
             }
 
+            if(readerList.size() > 0) {
+                createReaderList(readerList);
+                add(scrollPane);
+            } else {
+                remove(scrollPane);
+                result.setText("Nie ma takich czytelników.");
+            }
         });
 
         remove.addActionListener(e ->{
-            Reader Reader = (Reader) resultList.getSelectedValue();
+            User user = (User) resultList.getSelectedValue();
 
-            if(Reader == null) {
+            if(user == null) {
                 JOptionPane.showMessageDialog(this, "Żaden czytelnik nie został wybrany.");
             } else {
 
                 if (JOptionPane.showConfirmDialog(this, "Czy na pewno usunąć czytelnika?", "UWAGA!",
                         JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                    readerDBService.deleteReaderFromDB(Reader.getIdReader());
+                    readerDBService.deleteReaderFromDB(user.getIdUser());
+                    userDBService.deleteUserFromDB(user.getCardNumber());
                     repaint();
                     revalidate();
                 }
@@ -130,7 +139,29 @@ public class ReadersShowAllPanel extends JPanel {
         add(result);
         add(search);
         add(remove);
-        add(edit);
+        add(showBooks);
     }
 
+    public MyButton getShowBooks() {
+        return showBooks;
+    }
+
+    public int getReadersBooks(){
+
+        int readersID = 0;
+
+        User user = (User) resultList.getSelectedValue();
+        if(user != null) {
+            readersID = user.getCardNumber();
+        }
+
+        return readersID;
+    }
+
+    private boolean check(){
+
+        return Pattern.matches("[0-9]+", keyWord.getText());
+    }
+
+    public JList<Reader> getResultList(){return resultList;}
 }

@@ -2,8 +2,7 @@ package gui.librarian;
 
 import gui.book.*;
 import gui.bookTransfer.BookTransferPanel;
-import gui.event.EventAddPanel;
-import gui.event.EventDeletePanel;
+import gui.event.*;
 import gui.general.BackgroundLabel;
 import gui.general.MyButton;
 import gui.reader.ReadersShowAllPanel;
@@ -13,19 +12,23 @@ import javax.swing.*;
 
 public class LibrarianTabbedPanel extends JPanel {
 
-    BookGetPanel bookGetPanel = new BookGetPanel();
-    AuthorGetPanel authorGetPanel = new AuthorGetPanel();
-    EventAddPanel eventAddPanel = new EventAddPanel();
-    UsersShowAllPanel usersShowAllPanel = new UsersShowAllPanel();
-    JTabbedPane tabbedPane = new JTabbedPane();
+    private BookGetPanel bookGetPanel = new BookGetPanel();
+    private AuthorGetPanel authorGetPanel = new AuthorGetPanel();
+    private EventGetPanel eventGetPanel = new EventGetPanel();
+    private ReadersShowAllPanel readersShowAllPanel = new ReadersShowAllPanel();
+    private JTabbedPane tabbedPane = new JTabbedPane();
 
     private MyButton logout;
+    private JLabel librarianLabel;
+    private String start = "<html><body><table width='137'>";
+    private String finish = "</table></body></html>";
 
     public LibrarianTabbedPanel(){
 
         setLayout(null);
 
         createLogout();
+        createLibrarian();
         createTabbedPane();
         action();
         createBackground();
@@ -36,11 +39,13 @@ public class LibrarianTabbedPanel extends JPanel {
 
         tabbedPane = new JTabbedPane();
         tabbedPane.setBounds(20,20,640,500);
+        setBorder(BorderFactory.createDashedBorder(null));
+        setOpaque(false);
 
-        tabbedPane.insertTab("<html><body><table width='137'>Książki</table></body></html>", null, bookGetPanel, null, 0);
-        tabbedPane.insertTab("<html><body><table width='137'>Autorzy</table></body></html>", null, authorGetPanel, null, 1);
-        tabbedPane.insertTab("<html><body><table width='137'>Czytelnicy</table></body></html>", null, usersShowAllPanel, null, 2);
-        tabbedPane.insertTab("<html><body><table width='137'>Wydarzenia</table></body></html>", null, eventAddPanel, null, 3);
+        tabbedPane.insertTab(start + "Książki" + finish, null, bookGetPanel, null, 0);
+        tabbedPane.insertTab(start + "Autorzy" + finish, null, authorGetPanel, null, 1);
+        tabbedPane.insertTab(start + "Czytelnicy" + finish, null, readersShowAllPanel, null, 2);
+        tabbedPane.insertTab(start + "Wydarzenia" + finish, null, eventGetPanel, null, 3);
 
         add(tabbedPane);
     }
@@ -53,18 +58,24 @@ public class LibrarianTabbedPanel extends JPanel {
         add(logout);
     }
 
+    private void createLibrarian(){
+        librarianLabel = new JLabel();
+        librarianLabel.setBounds(45,470,500,30);
+        add(librarianLabel);
+    }
+
     private void action(){
         bookGetPanel.getEdit().addActionListener(e -> {
 
             if(!bookGetPanel.getResultList().isSelectionEmpty()){
 
                 BookEditPanel bookEditPanel = new BookEditPanel(bookGetPanel);
-                tabbedPane.insertTab("<html><body><table width='137'>Książki</table></body></html>", null, bookEditPanel, null, 0);
+                tabbedPane.insertTab(start + "Książki" + finish, null, bookEditPanel, null, 0);
                 tabbedPane.remove(bookGetPanel);
                 tabbedPane.setSelectedIndex(0);
 
                 bookEditPanel.getCancel().addActionListener(e3 -> {
-                    tabbedPane.insertTab("<html><body><table width='137'>Książki</table></body></html>", null, bookGetPanel, null, 0);
+                    tabbedPane.insertTab(start + "Książki" + finish, null, bookGetPanel, null, 0);
                     tabbedPane.remove(bookEditPanel);
                     tabbedPane.setSelectedIndex(0);
 
@@ -77,39 +88,70 @@ public class LibrarianTabbedPanel extends JPanel {
 
             BookAddPanel bookAddPanel = new BookAddPanel();
 
-            tabbedPane.insertTab("<html><body><table width='137'>Książki</table></body></html>", null, bookAddPanel, null, 0);
+            tabbedPane.insertTab(start + "Książki" + finish, null, bookAddPanel, null, 0);
             tabbedPane.remove(bookGetPanel);
             tabbedPane.setSelectedIndex(0);
 
             bookAddPanel.getCancel().addActionListener(e3 -> {
-                tabbedPane.insertTab("<html><body><table width='137'>Książki</table></body></html>", null, bookGetPanel, null, 0);
+                tabbedPane.insertTab(start + "Książki" + finish, null, bookGetPanel, null, 0);
                 tabbedPane.remove(bookAddPanel);
                 tabbedPane.setSelectedIndex(0);
 
             });
         });
 
-        usersShowAllPanel.getShowBooks().addActionListener(e -> {
-
-            if(!usersShowAllPanel.getResultList().isSelectionEmpty()) {
+        readersShowAllPanel.getShowBooks().addActionListener(e -> {
 
                 BookTransferPanel bookTransferPanel = new BookTransferPanel();
 
-                bookTransferPanel.getUserId().setText(String.valueOf(usersShowAllPanel.getUsersBooks()));
+                bookTransferPanel.getUserId().setText(String.valueOf(readersShowAllPanel.getReadersBooks()));
 
-                tabbedPane.insertTab("<html><body><table width='137'>Czytelnicy</table></body></html>", null, bookTransferPanel, null, 2);
-                tabbedPane.remove(usersShowAllPanel);
+                tabbedPane.insertTab(start + "Czytelnicy" + finish, null, bookTransferPanel, null, 2);
+                tabbedPane.remove(readersShowAllPanel);
                 tabbedPane.setSelectedIndex(2);
 
                 bookTransferPanel.getCancel().addActionListener(e3 -> {
-                    tabbedPane.insertTab("<html><body><table width='137'>Czytelnicy</table></body></html>", null, usersShowAllPanel, null, 2);
+                    tabbedPane.insertTab(start + "Czytelnicy" + finish, null, readersShowAllPanel, null, 2);
                     tabbedPane.remove(bookTransferPanel);
                     tabbedPane.setSelectedIndex(2);
 
                 });
-            }  else {
-                JOptionPane.showMessageDialog(this,"Czytelnik nie został wybrany");}
         });
+
+        eventGetPanel.getCreate().addActionListener(e -> {
+
+            EventAddPanel eventAddPanel = new EventAddPanel();
+
+            tabbedPane.insertTab(start + "Wydarzenia" + finish, null, eventAddPanel, null, 3);
+            tabbedPane.remove(eventGetPanel);
+            tabbedPane.setSelectedIndex(3);
+
+            eventAddPanel.getCancel().addActionListener(e3 -> {
+                tabbedPane.insertTab(start + "Wydarzenia" + finish, null, eventGetPanel, null, 3);
+                tabbedPane.remove(eventAddPanel);
+                tabbedPane.setSelectedIndex(3);
+
+            });
+        });
+
+        eventGetPanel.getEdit().addActionListener(e -> {
+
+            if(!eventGetPanel.getResultList().isSelectionEmpty()){
+
+                EventEditPanel eventEditPanel = new EventEditPanel(eventGetPanel);
+                tabbedPane.insertTab(start + "Wydarzenia" + finish, null, eventEditPanel, null, 3);
+                tabbedPane.remove(eventGetPanel);
+                tabbedPane.setSelectedIndex(3);
+
+                eventEditPanel.getCancel().addActionListener(e3 -> {
+                    tabbedPane.insertTab(start + "Wydarzenia" + finish, null, eventGetPanel, null, 3);
+                    tabbedPane.remove(eventEditPanel);
+                    tabbedPane.setSelectedIndex(3);
+
+                });
+            } else {
+                JOptionPane.showMessageDialog(this,"Wydarzenie nie zostało wybrane.");
+            }});
     }
 
     private void createBackground(){
@@ -117,5 +159,13 @@ public class LibrarianTabbedPanel extends JPanel {
         BackgroundLabel backgroundLabel = new BackgroundLabel();
         add(backgroundLabel);
 
+    }
+
+    public JLabel getLibrarianLabel(){
+        return librarianLabel;
+    }
+
+    public MyButton getLogout(){
+        return logout;
     }
 }

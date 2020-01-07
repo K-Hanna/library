@@ -16,7 +16,7 @@ public class AuthorGetPanel extends JPanel {
     private JTextField keyWord, newFirstName, newLastName;
     private JList resultList;
     private MyButton search, remove, edit, change;
-    private JScrollPane listScroller;
+    private JScrollPane scrollPane;
 
     private IAuthor authorService = new AuthorService();
     private IAuthorBook authorBookService = new AuthorBookService();
@@ -36,10 +36,9 @@ public class AuthorGetPanel extends JPanel {
         for (Author author : authorList) {
             listModel.addElement(author);
         }
+
         resultList.setModel(listModel);
         resultList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listScroller = new JScrollPane(resultList);
-        listScroller.setPreferredSize(new Dimension(250, 80));
 
     }
 
@@ -53,7 +52,11 @@ public class AuthorGetPanel extends JPanel {
 
         resultList = new JList();
         resultList.setBounds(50,60,300,290);
-        resultList.setBorder(new TitledBorder("Wyniki wyszukiwania:"));
+
+        scrollPane = new JScrollPane(resultList);
+        scrollPane.setBounds(50,60,300,290);
+        scrollPane.setBorder(new TitledBorder("Wyniki wyszukiwania:"));
+        scrollPane.setBackground(Color.white);
 
         result = new JLabel();
         result.setBounds(50,60,300,290);
@@ -109,8 +112,9 @@ public class AuthorGetPanel extends JPanel {
 
             if(authorList.size() > 0) {
                 createAuthorsJList(authorList);
-                add(resultList);
+                add(scrollPane);
             } else {
+                remove(scrollPane);
                 result.setText("Nie ma takich autorów.");
             }
 

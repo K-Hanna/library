@@ -23,22 +23,24 @@ public class BookEditPanel extends JPanel {
     private IAuthorBook authorBookService = new AuthorBookService();
     private IBookshelf bookshelfService = new BookshelfService();
     private int bookIdToEdit, authorIdToEdit;
+    private Author author;
+    private Book book;
 
     public BookEditPanel(BookGetPanel bookGetPanel) {
 
         this.bookIdToEdit = bookGetPanel.getBookIdToEdit();
         this.authorIdToEdit = bookGetPanel.getAuthorIdToEdit();
-        Book book = bookService.getBook(bookIdToEdit);
-        Author author = authorService.getAuthor(authorIdToEdit);
+        book = bookService.getBook(bookIdToEdit);
+        author = authorService.getAuthor(authorIdToEdit);
 
         setLayout(null);
 
-        createComps(book, author);
+        createComps();
         addComp();
-        action(book, author);
+        action();
     }
 
-    private void createComps(Book book, Author author) {
+    private void createComps() {
         titleLabel = new JLabel("Tytuł:");
         titleLabel.setBounds(50, 20, 100, 30);
 
@@ -142,7 +144,7 @@ public class BookEditPanel extends JPanel {
         add(cancel);
     }
 
-    private void action(Book book, Author author) {
+    private void action() {
 
         confirm.addActionListener(e -> {
             if(check()) {

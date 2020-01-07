@@ -68,7 +68,7 @@ public class Event {
 
     @Override
     public String toString() {
-        return "Wydarzenie "+title;
+        return title + ", " + dateEvent;
     }
 }
 

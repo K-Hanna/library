@@ -158,6 +158,50 @@ public class EventDBServiceImpl implements IEventDBService {
     }
 
     @Override
+    public List<Event> getAllEventsFromDB(int sort1, int sort2) {
+        List<Event> eventList = new ArrayList<>();
+        Connection connection = initializeDataBaseConnection();
+        PreparedStatement preparedStatement = null;
+
+        String SQL;
+
+        if(sort1 == 0 && sort2 == 0)
+            SQL = "select * from event order by title asc;";
+        else if(sort1 == 0 && sort2 == 1)
+            SQL = "select * from event order by title desc;";
+        else if(sort1 == 1 && sort2 == 0)
+            SQL = "select * from event order by dateevent asc;";
+        else
+            SQL = "select * from event order by dateevent desc;";
+
+        try {
+            String queryReadEvents = SQL ;
+            preparedStatement = connection.prepareStatement(queryReadEvents);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()){
+               Event event = new Event();
+                event.setIdEvent(resultSet.getInt("idevent"));
+                event.setDateEvent(resultSet.getDate("dateevent").toLocalDate());
+                event.setTitle(resultSet.getString("title"));
+                event.setImgId(resultSet.getInt("imgid"));
+                event.setShortDescription(resultSet.getString("shortdesc"));
+
+                eventList.add(event);
+            }
+            return eventList;
+        }
+        catch (SQLException e){
+            System.err.println("Error during invoke SQL query: \n" + e.getMessage());
+            throw  new RuntimeException("Error during invoke SQL query");
+        }
+        finally {
+            closeDBResources(connection,preparedStatement);
+        }
+    }
+
+    @Override
     public List<Event> getAllEventsFromDB() {
         List<Event> eventList = new ArrayList<>();
         Connection connection = initializeDataBaseConnection();
@@ -168,7 +212,7 @@ public class EventDBServiceImpl implements IEventDBService {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()){
-               Event event = new Event();
+                Event event = new Event();
                 event.setIdEvent(resultSet.getInt("idevent"));
                 event.setDateEvent(resultSet.getDate("dateevent").toLocalDate());
                 event.setTitle(resultSet.getString("title"));

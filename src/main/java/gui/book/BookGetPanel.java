@@ -54,26 +54,7 @@ public class BookGetPanel extends JPanel {
         }
 
         resultList.setModel(listModel);
-        resultList.setVisibleRowCount(10);
         resultList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-        scrollPane = new JScrollPane(resultList);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-//        scrollPane.setPreferredSize(new Dimension(550,290));
-
-        add(scrollPane);
-
-    }
-
-    private void createScroll(){
-
-        JScrollPane scrollpane = new JScrollPane(resultList);
-        scrollpane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollpane.setPreferredSize(new Dimension(100,50));
-        scrollpane.setBounds(20,140,580,320);
-        scrollpane.getViewport().add(resultList, null);
-        add(scrollpane);
-        repaint();
     }
 
     private void createComps() {
@@ -92,7 +73,11 @@ public class BookGetPanel extends JPanel {
 
         resultList = new JList<>();
         resultList.setBounds(20,100,600,240);
-        resultList.setBorder(new TitledBorder("Wyniki wyszukiwania:"));
+
+        scrollPane = new JScrollPane(resultList);
+        scrollPane.setBounds(20,100,600,240);
+        scrollPane.setBorder(new TitledBorder("Wyniki wyszukiwania:"));
+        scrollPane.setBackground(Color.white);
 
         result = new JLabel();
         result.setBounds(20,100,600,240);
@@ -128,7 +113,6 @@ public class BookGetPanel extends JPanel {
         lend = new MyButton(true);
         lend.setText("Wypożycz książkę");
         lend.setBounds(340,350,150,30);
-
     }
 
     private void actions(){
@@ -156,9 +140,9 @@ public class BookGetPanel extends JPanel {
 
             if(bookList.size() > 0) {
                 createBookJList(bookList);
-                add(resultList);
+                add(scrollPane);
             } else {
-                remove(resultList);
+                remove(scrollPane);
                 result.setText("Nie ma takich książek.");
             }
 
@@ -187,8 +171,9 @@ public class BookGetPanel extends JPanel {
 
             if(bookList.size() > 0) {
                 createBookJList(bookList);
-                add(resultList);
+                add(scrollPane);
             } else {
+                remove(scrollPane);
                 result.setText("Nie ma takich książek.");
             }
         });
@@ -198,8 +183,9 @@ public class BookGetPanel extends JPanel {
 
             if(bookList.size() > 0) {
                 createBookJList(bookList);
-                add(resultList);
+                add(scrollPane);
             } else {
+                remove(scrollPane);
                 result.setText("Nie ma takich książek.");
             }
         });
@@ -207,32 +193,26 @@ public class BookGetPanel extends JPanel {
         lend.addActionListener(e -> {
 
             AuthorBook book = resultList.getSelectedValue();
+            List<Integer> readerCards = readerDBService.getReadersCards();
 
-            if(book== null) {
+            if (book == null) {
                 JOptionPane.showMessageDialog(this, "Żadna książka nie została wybrana.");
+            } else if (!book.getBook().isAvailable()){
+                JOptionPane.showMessageDialog(this, "Książka jest niedostępna.");
             } else {
-                List<Integer> readerCards = readerDBService.getReadersCards();
 
                 readerCard = JOptionPane.showInputDialog(this, "Podaj numer karty czytelnika:");
 
                 if(check()){
                     int cardId = Integer.parseInt(readerCard);
-                    boolean present = false;
 
-                    for (Integer card : readerCards) {
-                        if (cardId == card) {
-                            present = true;
-                            break;
-                        }
-                    }
-
-                    User user = userDBService.readUserFromDB(cardId);
-                    Reader reader = readerDBService.readReaderFromDB(user.getIdUser());
-                    int readerId = reader.getIdReader();
-
-                    if (!present) {
+                    if (!readerCards.contains(cardId)) {
                         JOptionPane.showMessageDialog(this, "Nie ma takiej karty.");
                     } else {
+                        User user = userDBService.readUserFromDB(cardId);
+                        Reader reader = readerDBService.readReaderFromDB(user.getIdUser());
+                        int readerId = reader.getIdReader();
+
                         bookTransfer.lendBook(readerId, book.getBook().getBookId());
                         bookService.setBookAvailability(book.getBook().getBookId(), false);
 

@@ -44,6 +44,7 @@ public class MFrame extends JFrame {
     private AuthorGetPanel authorGetPanel;
     private BookTransferPanel bookTransferPanel;
     private BookShowPanel bookShowPanel;
+    private LibrarianTabbedPanel librarianTabbedPanel;
 
     public MFrame() {
 
@@ -212,164 +213,22 @@ public class MFrame extends JFrame {
                         } else if (Validation.checkIfLibrarian(user))
                         //---------------------BIBILOTEKARZ---------------------------
                         {
-                            librarianEntryPanel = new LibrarianEntryPanel();
-                            librarianEntryPanel.setCardNrLbl(loginPanel.getCardNrTxt().getText());
-                            librarianEntryPanel.setNameLbl(user.getFirstName() + " " + user.getLastName());
-                            add(librarianEntryPanel);
+                            librarianTabbedPanel = new LibrarianTabbedPanel();
+                            librarianTabbedPanel.getLibrarianLabel().setText
+                                    ("Zalogowano jako: " + user.getFirstName() + " " + user.getLastName() + ", " + loginPanel.getCardNrTxt().getText());
+
+                            add(librarianTabbedPanel);
                             remove(loginPanel);
                             repaint();
                             revalidate();
 
-                            librarianEntryPanel.getAddEventBtn().addActionListener(e1 -> {
-                                eventAddPanel = new EventAddPanel();
-                                add(eventAddPanel);
-                                remove(librarianEntryPanel);
-                                repaint();
-                                revalidate();
-
-                                eventAddPanel.getReturnBtn().addActionListener(e2 -> {
-                                    add(librarianEntryPanel);
-                                    remove(eventAddPanel);
-                                    repaint();
-                                    revalidate();
-                                });
-                            });
-
-                            librarianEntryPanel.getLendBook().addActionListener(e1 -> {
-                                bookTransferPanel = new BookTransferPanel();
-                                add(bookTransferPanel);
-                                remove(librarianEntryPanel);
-                                repaint();
-                                revalidate();
-
-                                bookTransferPanel.getCancel().addActionListener(e2 -> {
-                                    add(librarianEntryPanel);
-                                    remove(bookTransferPanel);
-                                    repaint();
-                                    revalidate();
-                                });
-                            });
-
-//                            librarianEntryPanel.getAcceptReturnBtn().addActionListener(e1 -> {
-//                                acceptReturnPanel = new AcceptReturnPanel();
-//                                add(acceptReturnPanel);
-//                                remove(librarianEntryPanel);
-//                                repaint();
-//                                revalidate();
-//
-//                                acceptReturnPanel.getReturnBtn().addActionListener(e2 -> {
-//                                    add(librarianEntryPanel);
-//                                    remove(acceptReturnPanel);
-//                                    repaint();
-//                                    revalidate();
-//                                });
-//                            });
-
-                            librarianEntryPanel.getDeleteEventBtn().addActionListener(e1 -> {
-                                eventDeletePanel = new EventDeletePanel();
-                                add(eventDeletePanel);
-                                remove(librarianEntryPanel);
-                                repaint();
-                                revalidate();
-
-                                eventDeletePanel.getReturnBtn().addActionListener(e2 -> {
-                                    add(librarianEntryPanel);
-                                    remove(eventDeletePanel);
-                                    repaint();
-                                    revalidate();
-                                });
-                            });
-
-                            librarianEntryPanel.getAddBook().addActionListener(e1 -> {
-                                bookAddPanel = new BookAddPanel();
-                                add(bookAddPanel);
-                                remove(librarianEntryPanel);
-                                repaint();
-                                revalidate();
-
-                                bookAddPanel.getCancel().addActionListener(e2 -> {
-                                    add(librarianEntryPanel);
-                                    remove(bookAddPanel);
-                                    repaint();
-                                    revalidate();
-                                });
-                            });
-
-                            librarianEntryPanel.getFindAuthor().addActionListener(e1 -> {
-                                authorGetPanel = new AuthorGetPanel();
-                                add(authorGetPanel);
-                                remove(librarianEntryPanel);
-                                repaint();
-                                revalidate();
-
-/*                                authorGetPanel.getBack().addActionListener(e2 -> {
-                                    add(librarianEntryPanel);
-                                    remove(authorGetPanel);
-                                    repaint();
-                                    revalidate();
-                                });*/
-                            });
-
-                            librarianEntryPanel.getFindBook().addActionListener(e1 -> {
-                                bookGetPanel = new BookGetPanel();
-                                add(bookGetPanel);
-                                remove(librarianEntryPanel);
-                                repaint();
-                                revalidate();
-
-                                bookGetPanel.getEdit().addActionListener(e2 -> {
-                                    if(!bookGetPanel.getResultList().isSelectionEmpty()){
-
-                                    bookEditPanel = new BookEditPanel(bookGetPanel);
-                                    add(bookEditPanel);
-                                    remove(bookGetPanel);
-                                    repaint();
-                                    revalidate();
-
-                                    bookEditPanel.getCancel().addActionListener(e3 -> {
-                                        add(bookGetPanel);
-                                        remove(bookEditPanel);
-                                        repaint();
-                                        revalidate();
-                                    });
-                                }
-                                    else {
-                                        JOptionPane.showMessageDialog(this,"Książka nie została wybrana");
-                                    }});
-
-
-/*                                bookGetPanel.getCan().addActionListener(e2 -> {
-                                    add(librarianEntryPanel);
-                                    remove(bookGetPanel);
-                                    repaint();
-                                    revalidate();
-                                });*/
-                            });
-
-
-                            librarianEntryPanel.getDeleteReaderProfileBtn().addActionListener(e1 -> {
-                                readerDeletePanel = new ReaderDeletePanel();
-                                add(readerDeletePanel);
-                                remove(librarianEntryPanel);
-                                repaint();
-                                revalidate();
-
-                                readerDeletePanel.getReturnBtn().addActionListener(e2 -> {
-                                    add(librarianEntryPanel);
-                                    remove(readerDeletePanel);
-                                    repaint();
-                                    revalidate();
-                                });
-                            });
-
-                            librarianEntryPanel.getReturnBtn().addActionListener(e1 -> {
-                                loginPanel.setCardNrTxt("");
-                                loginPanel.setPassTxt("");
+                            librarianTabbedPanel.getLogout().addActionListener(e1 -> {
                                 add(loginPanel);
-                                remove(librarianEntryPanel);
+                                remove(librarianTabbedPanel);
                                 repaint();
                                 revalidate();
                             });
+
                         } else if(Validation.checkIfAdmin(user)){
                             //---------------------ADMINISTRATOR---------------------------
                             adminEntryPanel = new AdminEntryPanel();

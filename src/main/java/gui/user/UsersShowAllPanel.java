@@ -27,7 +27,7 @@ public class UsersShowAllPanel extends JPanel {
     private JTextField keyWord;
     private JList resultList;
     private MyButton search, remove, showBooks;
-    private JScrollPane listScroller;
+    private JScrollPane scrollPane;
 
     private IUserDBService userDBService = new UserDBServiceImpl();
     private ICardDBService cardDBService = new CardDBServiceImpl();
@@ -53,8 +53,6 @@ public class UsersShowAllPanel extends JPanel {
 
         resultList.setModel(listModel);
         resultList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listScroller = new JScrollPane(resultList);
-        listScroller.setPreferredSize(new Dimension(250, 80));
 
     }
 
@@ -68,7 +66,11 @@ public class UsersShowAllPanel extends JPanel {
 
         resultList = new JList();
         resultList.setBounds(50,60,300,290);
-        resultList.setBorder(new TitledBorder("Wyniki wyszukiwania:"));
+
+        scrollPane = new JScrollPane(resultList);
+        scrollPane.setBounds(50,60,300,290);
+        scrollPane.setBorder(new TitledBorder("Wyniki wyszukiwania:"));
+        scrollPane.setBackground(Color.white);
 
         result = new JLabel();
         result.setBounds(50,60,300,290);
@@ -100,10 +102,10 @@ public class UsersShowAllPanel extends JPanel {
                 userList = userDBService.getAllUsersFromDB();
             } else if(check()){
                 userList = userDBService.readUsersFromDB(Integer.parseInt(keyWord.getText()));
-            } else if(keyWord.getText().contains(",")) {
-                int coma = keyWord.getText().indexOf(",");
+            } else if(keyWord.getText().contains(" ")) {
+                int coma = keyWord.getText().indexOf(" ");
                 String firstName = keyWord.getText().substring(0, coma);
-                String lastName = keyWord.getText().substring(coma + 2);
+                String lastName = keyWord.getText().substring(coma + 1);
                 userList = userDBService.readUsersFromDB(firstName, lastName);
             } else {
                 userList = userDBService.readUsersFromDB(keyWord.getText());
@@ -111,8 +113,9 @@ public class UsersShowAllPanel extends JPanel {
 
             if(userList.size() > 0) {
                 createUserList(userList);
-                add(resultList);
+                add(scrollPane);
             } else {
+                remove(scrollPane);
                 result.setText("Nie ma takich czytelników.");
             }
         });

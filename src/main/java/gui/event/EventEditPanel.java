@@ -13,18 +13,25 @@ import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
 
-public class EventAddPanel extends JPanel {
-    private JLabel titleLbl, dateLbl, posterLbl, shortDescLbl;
+public class EventEditPanel extends JPanel {
+    private JLabel titleLbl, dateLbl, posterLbl, shortDescLbl, posterShowLbl;
     private JTextField titleTxt, dateTxt, posterTxt;
     private JTextArea shortDescTxt;
-    private MyButton addEventBtn, browsePosterBtn, cancel;
+    private MyButton editEventBtn, browsePosterBtn, cancel;
     private int fieldLength = 200;
     private JFileChooser fileChooser;
+    private int eventToEdit;
+    int deltaY = 20;
+    private Event event;
 
     private IPosterDBService posterDBService = new PosterDBServiceImpl();
     private IEventDBService eventDBService = new EventDBServiceImpl();
 
-    public EventAddPanel(){
+    public EventEditPanel(EventGetPanel eventGetPanel){
+
+        this.eventToEdit = eventGetPanel.getEventIdToEdit();
+        event = eventDBService.readEvent(eventToEdit);
+
         setLayout(null);
         createAllLabels();
         addAllLabels();
@@ -36,8 +43,8 @@ public class EventAddPanel extends JPanel {
     }
 
     private void actionAddEventBtn() {
-        addEventBtn.addActionListener(e -> {
-            if (titleTxt.getText().equals("") || dateTxt.getText().equals("") || posterTxt.getText().equals("") || shortDescTxt.getText().equals(""))
+        editEventBtn.addActionListener(e -> {
+            if (titleTxt.getText().equals("") || dateTxt.getText().equals("")  || shortDescTxt.getText().equals(""))
                 JOptionPane.showMessageDialog(this, "Proszę wypełnić wszystkie pola");
             else if(Validation.checkIfDateOk(dateTxt.getText())== false)
                 JOptionPane.showMessageDialog(this, "Niepoprawna data");
@@ -46,13 +53,8 @@ public class EventAddPanel extends JPanel {
                 Poster posterForNewEvent = posterDBService.readLastImageFromDB();
                 int newPosterId = posterForNewEvent.getIdImg();
 
-                Event event = new Event();
-                event.setImgId(newPosterId);
-                event.setShortDescription(shortDescTxt.getText());
-                event.setTitle(titleTxt.getText());
-                event.setDateEvent(LocalDate.parse(dateTxt.getText()));
-                eventDBService.addEvent(event);
-                JOptionPane.showMessageDialog(this, "Nowe wydarzenie zostało dodane do bazy");
+                eventDBService.updateEventInDB(eventToEdit, titleTxt.getText(), LocalDate.parse(dateTxt.getText()), newPosterId, shortDescTxt.getText());
+                JOptionPane.showMessageDialog(this, "Wydarzenie zedytowane");
                 setComponentsEditability(false);
             }
         });
@@ -72,7 +74,7 @@ public class EventAddPanel extends JPanel {
     }
 
     private void addAllButtons() {
-        add(addEventBtn);
+        add(editEventBtn);
         add(browsePosterBtn);
         add(cancel);
     }
@@ -86,19 +88,19 @@ public class EventAddPanel extends JPanel {
     private void createBrowseBtn() {
         browsePosterBtn = new MyButton(true);
         browsePosterBtn.setText("Wyszukaj plakat");
-        browsePosterBtn.setBounds(150, 140, 200, 30);
+        browsePosterBtn.setBounds(150, 100, 200, 30);
     }
 
     private void createDeleteBtn() {
         cancel = new MyButton(false);
         cancel.setText("Anuluj");
-        cancel.setBounds(400, 300, 200, 30);
+        cancel.setBounds(400, 60, 200, 30);
     }
 
     private void createAddBtn() {
-        addEventBtn = new MyButton(true);
-        addEventBtn.setText("Wprowadź dane");
-        addEventBtn.setBounds(400, 250, 200, 30);
+        editEventBtn = new MyButton(true);
+        editEventBtn.setText("Wprowadź dane");
+        editEventBtn.setBounds(400, 20, 200, 30);
     }
 
     private void addAllLabels() {
@@ -108,6 +110,7 @@ public class EventAddPanel extends JPanel {
         add(dateTxt);
         add(posterLbl);
         add(posterTxt);
+        add(posterShowLbl);
         add(shortDescLbl);
         add(shortDescTxt);
     }
@@ -118,6 +121,7 @@ public class EventAddPanel extends JPanel {
         createDateLbl();
         createDateTxt();
         createPosterLbl();
+        createPosterShowLbl();
         createPosterTxt();
         createShortDescLbl();
         createShortDescTxt();
@@ -126,11 +130,12 @@ public class EventAddPanel extends JPanel {
     private void createShortDescLbl() {
         shortDescLbl = new JLabel();
         shortDescLbl.setText("Krótki opis");
-        shortDescLbl.setBounds(20, 180, 100, 30);
+        shortDescLbl.setBounds(50, 180, 100, 30);
     }
 
     private void createShortDescTxt() {
         shortDescTxt = new JTextArea();
+        shortDescTxt.setText(event.getShortDescription());
         shortDescTxt.setBounds(150, 180, fieldLength, 100);
         shortDescTxt.setBorder(BorderFactory.createLineBorder(Color.black));
         shortDescTxt.setWrapStyleWord(true);
@@ -141,35 +146,45 @@ public class EventAddPanel extends JPanel {
     private void createPosterLbl() {
         posterLbl = new JLabel();
         posterLbl.setText("Plakat");
-        posterLbl.setBounds(20, 140, 100, 30);
+        posterLbl.setBounds(50, 100, 100, 30);
+    }
+
+    private void createPosterShowLbl() {
+        posterShowLbl = new JLabel();
+        posterShowLbl.setBounds(400, 100, fieldLength, 300);
+        Poster poster = posterDBService.readImageById(event.getImgId());
+        ImageIcon icon = new ImageIcon(poster.getImgBytes());
+        posterShowLbl.setIcon(icon);
     }
 
     private void createPosterTxt() {
         posterTxt = new JTextField();
-        posterTxt.setBounds(150, 380, fieldLength, 30);
+        posterTxt.setBounds(150, 140, fieldLength, 30);
+        posterTxt.setEditable(false);
     }
-
 
     private void createDateLbl() {
         dateLbl = new JLabel();
         dateLbl.setText("Data");
-        dateLbl.setBounds(20, 100, 100, 30);
+        dateLbl.setBounds(50, 60, 100, 30);
     }
 
     private void createDateTxt() {
         dateTxt = new JTextField();
-        dateTxt.setBounds(150, 100, fieldLength, 30);
+        dateTxt.setText(event.getDateEvent().toString());
+        dateTxt.setBounds(150, 60, fieldLength, 30);
     }
 
     private void createTitleLbl() {
         titleLbl = new JLabel();
         titleLbl.setText("Tytuł");
-        titleLbl.setBounds(20, 60, 100, 30);
+        titleLbl.setBounds(50, 20, 100, 30);
     }
 
     private void createTitleTxt() {
         titleTxt = new JTextField();
-        titleTxt.setBounds(150, 60, fieldLength, 30);
+        titleTxt.setText(event.getTitle());
+        titleTxt.setBounds(150, 20, fieldLength, 30);
     }
 
 
@@ -188,7 +203,7 @@ public class EventAddPanel extends JPanel {
         titleTxt.setEditable(editability);
         dateTxt.setEditable(editability);
         posterTxt.setEditable(editability);
-       shortDescTxt.setEditable(editability);
+        shortDescTxt.setEditable(editability);
     }
 
     public JTextField getPosterTxt() {

@@ -10,6 +10,7 @@ public interface IEventDBService {
     int ifReaderJoined(int idEvent, int idReader);
     Event readEvent(int idEvent);
     Event readLastEventFromDB();
+    List<Event> getAllEventsFromDB(int sort1, int sort2);
     List<Event> getAllEventsFromDB();
     List<Event> getAllEventsForUser(int readerId);
     void updateEventInDB(int idEvent, String title, LocalDate dateEvent, int imgId, String shortDescription);

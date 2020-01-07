@@ -14,7 +14,7 @@ import java.util.List;
 
 public class EventDeletePanel extends JPanel {
     private JComboBox eventChooserBx;
-    private MyButton viewEventBtn, deleteEventBtn, returnBtn;
+    private MyButton viewEventBtn, deleteEventBtn, cancel;
     private JLabel titleLbl, dateLbl, posterLbl, shortDescLbl, posterShowLbl;
     private JTextField titleTxt, dateTxt;
     private JTextArea shortDescTxt;
@@ -45,7 +45,7 @@ public class EventDeletePanel extends JPanel {
         add(titleLbl);
         add(titleTxt);
         add(viewEventBtn);
-        add(returnBtn);
+        add(cancel);
         add(deleteEventBtn);
     }
 
@@ -117,9 +117,9 @@ public class EventDeletePanel extends JPanel {
     }
 
     private void createReturnBtn() {
-        returnBtn = new MyButton(false);
-        returnBtn.setText("Powrót");
-        returnBtn.setBounds(450, 300, 200, 30);
+        cancel = new MyButton(false);
+        cancel.setText("Anuluj");
+        cancel.setBounds(450, 300, 200, 30);
     }
 
     private void createEventChooserBx() {
@@ -206,8 +206,8 @@ public class EventDeletePanel extends JPanel {
         this.posterShowLbl = posterShowLbl;
     }
 
-    public MyButton getReturnBtn() {
-        return returnBtn;
+    public MyButton getCancel() {
+        return cancel;
     }
 
 }

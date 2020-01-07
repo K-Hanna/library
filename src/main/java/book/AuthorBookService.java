@@ -155,6 +155,7 @@ public class AuthorBookService implements IAuthorBook{
                 book.setGenre(rs.getString("genre"));
                 book.setISBN(rs.getLong("isbn"));
                 book.setBookId(rs.getInt("book_id"));
+                book.setAvailable(rs.getBoolean("available"));
                 AuthorBook authorBook = new AuthorBook();
                 authorBook.setBook(book);
                 authorBook.setAuthor(author);
