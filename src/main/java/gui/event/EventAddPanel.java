@@ -9,12 +9,15 @@ import images.IPosterDBService;
 import images.Poster;
 import images.PosterDBServiceImpl;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 
 public class EventAddPanel extends JPanel {
-    private JLabel titleLbl, dateLbl, posterLbl, shortDescLbl;
+    private JLabel titleLbl, dateLbl, posterLbl, shortDescLbl, posterShowLbl;
     private JTextField titleTxt, dateTxt, posterTxt;
     private JTextArea shortDescTxt;
     private MyButton addEventBtn, browsePosterBtn, cancel;
@@ -62,9 +65,18 @@ public class EventAddPanel extends JPanel {
     private void addActionBrowsePosterBtn(){
         browsePosterBtn.addActionListener(e -> {
             fileChooser = new JFileChooser("C:\\Users\\e495405\\Desktop\\Baza danych zdjęcia\\biblio\\postery\\200_300");
+            fileChooser.addChoosableFileFilter(new ImageFilter());
+            fileChooser.setAcceptAllFileFilterUsed(false);
             int r = fileChooser.showOpenDialog(this);
-            if(r == JFileChooser.APPROVE_OPTION)
+            if(r == JFileChooser.APPROVE_OPTION){
                 getPosterTxt().setText(fileChooser.getSelectedFile().getAbsolutePath());
+                File file = new File(fileChooser.getSelectedFile().getAbsolutePath());
+                try {
+                    posterShowLbl.setIcon(new ImageIcon(ImageIO.read(file)));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
             else
                 getPosterTxt().setText("");
 
@@ -86,19 +98,19 @@ public class EventAddPanel extends JPanel {
     private void createBrowseBtn() {
         browsePosterBtn = new MyButton(true);
         browsePosterBtn.setText("Wyszukaj plakat");
-        browsePosterBtn.setBounds(150, 140, 200, 30);
+        browsePosterBtn.setBounds(150, 330, 200, 30);
     }
 
     private void createDeleteBtn() {
         cancel = new MyButton(false);
         cancel.setText("Anuluj");
-        cancel.setBounds(400, 300, 200, 30);
+        cancel.setBounds(400, 60, 200, 30);
     }
 
     private void createAddBtn() {
         addEventBtn = new MyButton(true);
         addEventBtn.setText("Wprowadź dane");
-        addEventBtn.setBounds(400, 250, 200, 30);
+        addEventBtn.setBounds(400, 20, 200, 30);
     }
 
     private void addAllLabels() {
@@ -108,6 +120,7 @@ public class EventAddPanel extends JPanel {
         add(dateTxt);
         add(posterLbl);
         add(posterTxt);
+        add(posterShowLbl);
         add(shortDescLbl);
         add(shortDescTxt);
     }
@@ -119,6 +132,7 @@ public class EventAddPanel extends JPanel {
         createDateTxt();
         createPosterLbl();
         createPosterTxt();
+        createPosterShowLbl();
         createShortDescLbl();
         createShortDescTxt();
     }
@@ -126,12 +140,12 @@ public class EventAddPanel extends JPanel {
     private void createShortDescLbl() {
         shortDescLbl = new JLabel();
         shortDescLbl.setText("Krótki opis");
-        shortDescLbl.setBounds(20, 180, 100, 30);
+        shortDescLbl.setBounds(50, 100, 100, 30);
     }
 
     private void createShortDescTxt() {
         shortDescTxt = new JTextArea();
-        shortDescTxt.setBounds(150, 180, fieldLength, 100);
+        shortDescTxt.setBounds(150, 100, fieldLength, 100);
         shortDescTxt.setBorder(BorderFactory.createLineBorder(Color.black));
         shortDescTxt.setWrapStyleWord(true);
         shortDescTxt.setLineWrap(true);
@@ -141,35 +155,40 @@ public class EventAddPanel extends JPanel {
     private void createPosterLbl() {
         posterLbl = new JLabel();
         posterLbl.setText("Plakat");
-        posterLbl.setBounds(20, 140, 100, 30);
+        posterLbl.setBounds(50, 330, 100, 30);
     }
 
     private void createPosterTxt() {
         posterTxt = new JTextField();
-        posterTxt.setBounds(150, 380, fieldLength, 30);
+        posterTxt.setBounds(150, 370, fieldLength, 30);
+    }
+
+    private void createPosterShowLbl() {
+        posterShowLbl = new JLabel();
+        posterShowLbl.setBounds(400, 100, fieldLength, 300);
     }
 
 
     private void createDateLbl() {
         dateLbl = new JLabel();
         dateLbl.setText("Data");
-        dateLbl.setBounds(20, 100, 100, 30);
+        dateLbl.setBounds(50, 60, 100, 30);
     }
 
     private void createDateTxt() {
         dateTxt = new JTextField();
-        dateTxt.setBounds(150, 100, fieldLength, 30);
+        dateTxt.setBounds(150, 60, fieldLength, 30);
     }
 
     private void createTitleLbl() {
         titleLbl = new JLabel();
         titleLbl.setText("Tytuł");
-        titleLbl.setBounds(20, 60, 100, 30);
+        titleLbl.setBounds(50, 20, 100, 30);
     }
 
     private void createTitleTxt() {
         titleTxt = new JTextField();
-        titleTxt.setBounds(150, 60, fieldLength, 30);
+        titleTxt.setBounds(150, 20, fieldLength, 30);
     }
 
 

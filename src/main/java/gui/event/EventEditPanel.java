@@ -9,8 +9,11 @@ import images.IPosterDBService;
 import images.Poster;
 import images.PosterDBServiceImpl;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 
 public class EventEditPanel extends JPanel {
@@ -21,7 +24,6 @@ public class EventEditPanel extends JPanel {
     private int fieldLength = 200;
     private JFileChooser fileChooser;
     private int eventToEdit;
-    int deltaY = 20;
     private Event event;
 
     private IPosterDBService posterDBService = new PosterDBServiceImpl();
@@ -49,27 +51,38 @@ public class EventEditPanel extends JPanel {
             else if(Validation.checkIfDateOk(dateTxt.getText())== false)
                 JOptionPane.showMessageDialog(this, "Niepoprawna data");
             else {
-                posterDBService.addImage(getPosterTxt().getText());
-                Poster posterForNewEvent = posterDBService.readLastImageFromDB();
-                int newPosterId = posterForNewEvent.getIdImg();
+                int newPosterId;
+
+                if(getPosterTxt().getText().isEmpty())
+                    newPosterId = event.getImgId();
+                else {
+                    posterDBService.addImage(getPosterTxt().getText());
+                    Poster posterForNewEvent = posterDBService.readLastImageFromDB();
+                    newPosterId = posterForNewEvent.getIdImg();
+                }
 
                 eventDBService.updateEventInDB(eventToEdit, titleTxt.getText(), LocalDate.parse(dateTxt.getText()), newPosterId, shortDescTxt.getText());
                 JOptionPane.showMessageDialog(this, "Wydarzenie zedytowane");
                 setComponentsEditability(false);
             }
         });
-
     }
 
     private void addActionBrowsePosterBtn(){
         browsePosterBtn.addActionListener(e -> {
             fileChooser = new JFileChooser("C:\\Users\\e495405\\Desktop\\Baza danych zdjęcia\\biblio\\postery\\200_300");
             int r = fileChooser.showOpenDialog(this);
-            if(r == JFileChooser.APPROVE_OPTION)
+            if(r == JFileChooser.APPROVE_OPTION) {
                 getPosterTxt().setText(fileChooser.getSelectedFile().getAbsolutePath());
+                File file = new File(fileChooser.getSelectedFile().getAbsolutePath());
+                try {
+                    posterShowLbl.setIcon(new ImageIcon(ImageIO.read(file)));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
             else
                 getPosterTxt().setText("");
-
         });
     }
 
@@ -88,7 +101,7 @@ public class EventEditPanel extends JPanel {
     private void createBrowseBtn() {
         browsePosterBtn = new MyButton(true);
         browsePosterBtn.setText("Wyszukaj plakat");
-        browsePosterBtn.setBounds(150, 100, 200, 30);
+        browsePosterBtn.setBounds(150, 330, 200, 30);
     }
 
     private void createDeleteBtn() {
@@ -130,13 +143,13 @@ public class EventEditPanel extends JPanel {
     private void createShortDescLbl() {
         shortDescLbl = new JLabel();
         shortDescLbl.setText("Krótki opis");
-        shortDescLbl.setBounds(50, 180, 100, 30);
+        shortDescLbl.setBounds(50, 100, 100, 30);
     }
 
     private void createShortDescTxt() {
         shortDescTxt = new JTextArea();
         shortDescTxt.setText(event.getShortDescription());
-        shortDescTxt.setBounds(150, 180, fieldLength, 100);
+        shortDescTxt.setBounds(150, 100, fieldLength, 100);
         shortDescTxt.setBorder(BorderFactory.createLineBorder(Color.black));
         shortDescTxt.setWrapStyleWord(true);
         shortDescTxt.setLineWrap(true);
@@ -146,7 +159,7 @@ public class EventEditPanel extends JPanel {
     private void createPosterLbl() {
         posterLbl = new JLabel();
         posterLbl.setText("Plakat");
-        posterLbl.setBounds(50, 100, 100, 30);
+        posterLbl.setBounds(50, 330, 100, 30);
     }
 
     private void createPosterShowLbl() {
@@ -159,7 +172,7 @@ public class EventEditPanel extends JPanel {
 
     private void createPosterTxt() {
         posterTxt = new JTextField();
-        posterTxt.setBounds(150, 140, fieldLength, 30);
+        posterTxt.setBounds(150, 370, fieldLength, 30);
         posterTxt.setEditable(false);
     }
 

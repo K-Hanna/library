@@ -20,7 +20,7 @@ public class LibrarianTabbedPanel extends JPanel {
 
     private MyButton logout;
     private JLabel librarianLabel;
-    private String start = "<html><body><table width='137'>";
+    private String start = "<html><body><table width='137' height='50'>";
     private String finish = "</table></body></html>";
 
     public LibrarianTabbedPanel(){
