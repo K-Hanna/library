@@ -174,7 +174,7 @@ public class BookTransferService implements IBookTransfer {
     }
 
     @Override
-    public void acceptReturnBook(int userId, int bookId) {
+    public void acceptReturnBook(int bookId) {
 
         SQL = "delete from lending where book_id = ?;";
 

@@ -8,7 +8,7 @@ public interface IBookTransfer {
     List<BookTransfer> getLentUserBooks(int userId);
     void reserveBook(int userId, int bookId);
     void lendBook(int userId, int bookId);
-    void acceptReturnBook(int userId, int bookId);
+    void acceptReturnBook(int bookId);
     void unReserveBook(int bookId);
     String getMessage();
 }

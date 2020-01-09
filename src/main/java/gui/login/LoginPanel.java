@@ -16,6 +16,7 @@ public class LoginPanel extends JPanel {
     private ImageIcon image;
     private JPasswordField passTxt;
     private MyButton libInfoBtn, loginBtn, registerBtn;
+    private int userId;
 
     public LoginPanel(){
 
@@ -130,5 +131,13 @@ public class LoginPanel extends JPanel {
         for (Character c: passTxt.getPassword())
             sb.append(c);
         return sb.toString();
+    }
+
+    public int getUserId(){
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 }

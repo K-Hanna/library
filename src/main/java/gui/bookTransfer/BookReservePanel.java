@@ -4,34 +4,38 @@ import book.*;
 import bookTransfer.BookTransferService;
 import bookTransfer.IBookTransfer;
 import gui.general.MyButton;
+import gui.reader.ReaderTabbedPanel;
 import reader.IReaderDBService;
 import reader.Reader;
 import reader.ReaderDBServiceImpl;
-import user.IUserDBService;
-import user.User;
-import user.UserDBServiceImpl;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BookReservePanel extends JPanel {
 
-    private JLabel searchByLabel, keyWordLabel, resultListLabel, result;
+    private JLabel searchByLabel, keyWordLabel, result;
     private JComboBox<String> searchBy;
     private JTextField keyWord;
     private JList<AuthorBook> resultList;
-    private MyButton search, reserveBtn, returnBtn;
+    private JScrollPane scrollPane;
+    private MyButton search, reserveBtn;
+    private MyButton cancel;
+    private int idUser;
 
     private IAuthor iAuthor = new AuthorService();
+    private IBook iBook = new BookService();
     private IAuthorBook iAuthorBook = new AuthorBookService();
     private IBookTransfer iBookTransfer = new BookTransferService();
     private JLabel cardIdTxt;
-    private IUserDBService userDBService = new UserDBServiceImpl();
     private IReaderDBService readerDBService = new ReaderDBServiceImpl();
 
-    public BookReservePanel() {
+    public BookReservePanel(ReaderTabbedPanel readerTabbedPanel) {
+
+        this.idUser = readerTabbedPanel.getIdUser();
 
         setLayout(null);
 
@@ -48,52 +52,52 @@ public class BookReservePanel extends JPanel {
             listModel.addElement(aBookList);
         }
         resultList.setModel(listModel);
-        JScrollPane listScroller = new JScrollPane(resultList);
-        listScroller.setPreferredSize(new Dimension(250, 80));
+
     }
 
     private void createComps() {
 
         searchByLabel = new JLabel("Wyszukaj po:");
-        searchByLabel.setBounds(50,60,100,30);
+        searchByLabel.setBounds(20,20,100,30);
 
         searchBy = new JComboBox<>(new String[]{"tytule", "autorze (imię, nazwisko)", "wydawcy", "gatunku", "języku"});
-        searchBy.setBounds(200,60,200,30);
+        searchBy.setBounds(140,20,200,30);
 
         keyWordLabel = new JLabel("Słowo kluczowe:");
-        keyWordLabel.setBounds(50,100,100,30);
+        keyWordLabel.setBounds(20,60,100,30);
 
         keyWord = new JTextField();
-        keyWord.setBounds(200,100,200,30);
-
-        resultListLabel = new JLabel("Wyniki wyszukiwania:");
-        resultListLabel.setBounds(50,140,200,30);
+        keyWord.setBounds(140,60,200,30);
 
         resultList = new JList<>();
-        resultList.setBounds(50,180,600,300);
-        resultList.setBorder(BorderFactory.createLineBorder(Color.black));
+        resultList.setBounds(20,100,600,240);
+
+        scrollPane = new JScrollPane(resultList);
+        scrollPane.setBounds(20,100,600,240);
+        scrollPane.setBorder(new TitledBorder("Wyniki wyszukiwania:"));
+        scrollPane.setBackground(Color.white);
 
         result = new JLabel();
-        result.setBounds(50,180,600,300);
-        result.setBorder(BorderFactory.createLineBorder(Color.black));
+        result.setBounds(20,100,600,240);
+        result.setBorder(new TitledBorder("Wyniki wyszukiwania:"));
         result.setBackground(Color.white);
         result.setOpaque(true);
         result.setVerticalAlignment(1);
 
         search = new MyButton(true);
-        search.setText("Szukaj");
-        search.setBounds(450,60,200,30);
+        search.setText("Szukaj książki");
+        search.setBounds(400,20,200,30);
 
         reserveBtn = new MyButton(true);
-        reserveBtn.setText("Rezerwuj");
-        reserveBtn.setBounds(450,100,200,30);
+        reserveBtn.setText("Zarezerwuj");
+        reserveBtn.setBounds(400,60,200,30);
 
-        returnBtn = new MyButton(false);
-        returnBtn.setText("Cofnij");
-        returnBtn.setBounds(450,490,200,30);
+        cancel = new MyButton(false);
+        cancel.setText("Cofnij");
+        cancel.setBounds(400,350,200,30);
 
         cardIdTxt = new JLabel();
-        cardIdTxt.setBounds(30,30, 30,20);
+        cardIdTxt.setBounds(20,20,200,30);
 
     }
 
@@ -122,9 +126,9 @@ public class BookReservePanel extends JPanel {
 
             if(bookList.size() > 0) {
                 createBookJList(bookList);
-                add(resultList);
+                add(scrollPane);
             } else {
-                remove(resultList);
+                remove(scrollPane);
                 result.setText("Nie ma takich książek.");
             }
         });
@@ -133,19 +137,19 @@ public class BookReservePanel extends JPanel {
 
             List<AuthorBook> book = resultList.getSelectedValuesList();
 
-            User user = userDBService.readUserFromDB(Integer.parseInt(cardIdTxt.getText()));
-            Reader reader = readerDBService.readReaderFromDB(user.getIdUser());
-            int readerId = reader.getIdReader();
-
-            for (AuthorBook aBook : book) {
-                iBookTransfer.reserveBook(readerId, aBook.getBook().getBookId());
-                JOptionPane.showMessageDialog(this, iBookTransfer.getMessage());
-                repaint();
-                revalidate();
-            }
-
-            if(book.size() == 0)
+            if(book.size() == 0) {
                 JOptionPane.showMessageDialog(this, "Żadna książka nie została wybrana.");
+            } else {
+                Reader reader = readerDBService.readReaderFromDB(idUser);
+                int readerId = reader.getIdReader();
+
+                for (AuthorBook aBook : book) {
+                    iBookTransfer.reserveBook(readerId, aBook.getBook().getBookId());
+                    iBook.setBookAvailability(aBook.getBook().getBookId(), false);
+                }
+                JOptionPane.showMessageDialog(this, iBookTransfer.getMessage());
+
+            }
         });
     }
 
@@ -155,15 +159,14 @@ public class BookReservePanel extends JPanel {
         add(searchBy);
         add(keyWordLabel);
         add(keyWord);
-        add(resultListLabel);
         add(result);
         add(search);
         add(reserveBtn);
-        add(returnBtn);
+        add(cancel);
     }
 
-    public MyButton getReturnBtn() {
-        return returnBtn;
+    public MyButton getCancel() {
+        return cancel;
     }
 
     public JLabel getCardIdTxt() {

@@ -6,7 +6,6 @@ import gui.event.*;
 import gui.general.BackgroundLabel;
 import gui.general.MyButton;
 import gui.reader.ReadersShowAllPanel;
-import gui.user.UsersShowAllPanel;
 
 import javax.swing.*;
 
@@ -32,7 +31,6 @@ public class LibrarianTabbedPanel extends JPanel {
         createTabbedPane();
         action();
         createBackground();
-
     }
 
     private void createTabbedPane(){
@@ -155,10 +153,8 @@ public class LibrarianTabbedPanel extends JPanel {
     }
 
     private void createBackground(){
-
         BackgroundLabel backgroundLabel = new BackgroundLabel();
         add(backgroundLabel);
-
     }
 
     public JLabel getLibrarianLabel(){

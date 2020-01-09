@@ -21,8 +21,6 @@ import java.awt.event.KeyListener;
 public class MFrame extends JFrame {
 
     private ReaderAddPanel readerAddPanel;
-    private ReaderUpdatePanel readerUpdatePanel;
-    private ReaderDeletePanel readerDeletePanel;
     private LibrarianAddPanel librarianAddPanel;
     private LibrarianUpdatePanel librarianUpdatePanel;
     private LibrarianDeletePanel librarianDeletePanel;
@@ -30,21 +28,9 @@ public class MFrame extends JFrame {
     private AdminDeletePanel adminDeletePanel;
     private AdminUpdatePanel adminUpdatePanel;
     private LoginPanel loginPanel;
-    private ReaderEntryPanel readerEntryPanel;
-    private LibrarianEntryPanel librarianEntryPanel;
     private AdminEntryPanel adminEntryPanel;
-    private EventAddPanel eventAddPanel;
-    private EventDeletePanel eventDeletePanel;
-    private EventSignInPanel eventSignInPanel;
-    private EventSeeAllPanel eventSeeAllPanel;
-    private BookAddPanel bookAddPanel;
-    private BookEditPanel bookEditPanel;
-    private BookGetPanel bookGetPanel;
-    private BookReservePanel bookReservePanel;
-    private AuthorGetPanel authorGetPanel;
-    private BookTransferPanel bookTransferPanel;
-    private BookShowPanel bookShowPanel;
     private LibrarianTabbedPanel librarianTabbedPanel;
+    private ReaderTabbedPanel readerTabbedPanel;
 
     public MFrame() {
 
@@ -97,18 +83,37 @@ public class MFrame extends JFrame {
                 if (Validation.checkUserExists(Integer.parseInt(cardIdTxt))) {
                     IUserDBService userDBService = new UserDBServiceImpl();
                     User user = userDBService.readUserFromDB(Integer.parseInt(cardIdTxt));
+                    loginPanel.setUserId(user.getIdUser());
                     if (Validation.checkPassOk(user, passTxt)) {
                         if (Validation.checkIfReader(user)) {
                             //---------------------CZYTELNIK---------------------------
-                            readerEntryPanel = new ReaderEntryPanel();
+                            readerTabbedPanel = new ReaderTabbedPanel(loginPanel);
+                            readerTabbedPanel.getReaderLabel().setText
+                                    ("Zalogowano jako: " + user.getFirstName() + " " + user.getLastName() + ", " + loginPanel.getCardNrTxt().getText());
+//                            readerTabbedPanel.getUserId().setText(String.valueOf(user.getIdUser()));
+
+                            add(readerTabbedPanel);
+                            remove(loginPanel);
+                            repaint();
+                            revalidate();
+
+                            readerTabbedPanel.getLogout().addActionListener(e1 -> {
+                                add(loginPanel);
+                                remove(readerTabbedPanel);
+                                repaint();
+                                revalidate();
+                            });
+
+
+/*                            readerEntryPanel = new ReaderEntryPanel();
                             readerEntryPanel.setCardNrLbl(loginPanel.getCardNrTxt().getText());
                             readerEntryPanel.setNameLbl(user.getFirstName() + " " + user.getLastName());
                             add(readerEntryPanel);
                             remove(loginPanel);
                             repaint();
-                            revalidate();
+                            revalidate();*/
 
-                            readerEntryPanel.getJoinEventBtn().addActionListener(e1 -> {
+                            /*readerEntryPanel.getJoinEventBtn().addActionListener(e1 -> {
                                 eventSignInPanel = new EventSignInPanel();
                                 eventSignInPanel.getCardIdTxt().setText(readerEntryPanel.getCardNrLbl().getText());
                                 add(eventSignInPanel);
@@ -175,10 +180,10 @@ public class MFrame extends JFrame {
 
                             });
 
-                            /*readerEntryPanel.getLendingsBtn().addActionListener(e1 -> {
+                            *//*readerEntryPanel.getLendingsBtn().addActionListener(e1 -> {
                                 reservationShowPanel = new ReservationShowPanel();
                                 reservationShowPanel.getCardIdLbl().se
-                            });*/
+                            });*//*
 
                             readerEntryPanel.getDoBookingBtn().addActionListener(e1 -> {
                                 bookReservePanel = new BookReservePanel();
@@ -207,7 +212,7 @@ public class MFrame extends JFrame {
                                 remove(readerEntryPanel);
                                 repaint();
                                 revalidate();
-                            });
+                            });*/
 
 
                         } else if (Validation.checkIfLibrarian(user))

@@ -8,6 +8,7 @@ public interface IEventDBService {
     void deleteEvent(int idEvent);
     void joinEvent(int idEvent,int idReader);
     int ifReaderJoined(int idEvent, int idReader);
+    void resignEvent(int idEvent, int idReader);
     Event readEvent(int idEvent);
     Event readLastEventFromDB();
     List<Event> getAllEventsFromDB(int sort1, int sort2);

@@ -101,6 +101,27 @@ public class EventDBServiceImpl implements IEventDBService {
     }
 
     @Override
+    public void resignEvent(int idEvent, int idReader) {
+        Connection connection = initializeDataBaseConnection();
+        PreparedStatement preparedStatement = null;
+        try {
+            String queryDeleteEvent = "DELETE FROM event_reader WHERE eventid = ? and readerid = ?; ";
+            preparedStatement = connection.prepareStatement(queryDeleteEvent);
+            preparedStatement.setInt(1,idEvent);
+            preparedStatement.setInt(2, idReader);
+            preparedStatement.execute();
+            System.out.println("Reader has resigned from event");
+        }
+        catch (SQLException e){
+            System.err.println("Error during invoke SQL query: \n" + e.getMessage());
+            throw  new RuntimeException("Error during invoke SQL query");
+        }
+        finally {
+            closeDBResources(connection,preparedStatement);
+        }
+    }
+
+    @Override
     public Event readEvent(int idEvent) {
         Connection connection = initializeDataBaseConnection();
         PreparedStatement preparedStatement = null;
@@ -241,7 +262,7 @@ public class EventDBServiceImpl implements IEventDBService {
             String queryReadEvents = "Select event.idevent as idevent, event.title as title,event.dateevent as dateevent, event.imgid as imgid, event.shortdesc as shortdesc FROM event_reader \n" +
                     "inner join event \n" +
                     "on event.idevent = event_reader.eventid \n" +
-                    "WHERE (readerid) = (?);" ;
+                    "WHERE (readerid) = (?) order by title;" ;
             preparedStatement = connection.prepareStatement(queryReadEvents);
             preparedStatement.setInt(1,readerId);
             ResultSet resultSet = preparedStatement.executeQuery();

@@ -1,10 +1,14 @@
 package gui.bookTransfer;
 
+import book.BookService;
+import book.IBook;
 import bookTransfer.BookTransfer;
 import bookTransfer.BookTransferService;
 import bookTransfer.IBookTransfer;
 import gui.general.MyButton;
 import gui.reader.ReaderEntryPanel;
+import gui.reader.ReaderTabbedPanel;
+import gui.reader.ReaderUpdatePanel;
 import reader.IReaderDBService;
 import reader.Reader;
 import reader.ReaderDBServiceImpl;
@@ -13,50 +17,52 @@ import user.User;
 import user.UserDBServiceImpl;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.util.List;
 
 public class BookShowPanel extends JPanel {
 
-    private ReaderEntryPanel readerEntryPanel;
-
     private IReaderDBService readerDBService = new ReaderDBServiceImpl();
-    private IUserDBService userDBService = new UserDBServiceImpl();
     private IBookTransfer bookTransfer = new BookTransferService();
+    private IBook bookService = new BookService();
 
-    private JLabel lentBooksLabel, reservedBooksLabel, cardIdTxt, noReservedBooks, noBorrowedBooks;
-    private MyButton resignBook, returnBtn;
+    private JLabel reservedBooksLabel, lentBooksLabel;
+    private MyButton resignBook, searchBooks;
     private JList<BookTransfer> lentBooks, reservedBooks;
+    private JScrollPane scrollPane, scrollPane2;
+    private Reader reader;
 
-    public BookShowPanel(ReaderEntryPanel readerEntryPanel) {
+    private int idUser, idReader;
+
+    public BookShowPanel(ReaderTabbedPanel readerTabbedPanel) {
+
+        this.idUser = readerTabbedPanel.getIdUser();
+
+        reader = readerDBService.readReaderFromDB(idUser);
+        idReader = reader.getIdReader();
 
         setLayout(null);
-        this.readerEntryPanel = readerEntryPanel;
-        createCardIdTxt();
-        add(cardIdTxt);
-        cardIdTxt.setText(readerEntryPanel.getCardNrLbl().getText());
-        cardIdTxt.setVisible(false);
-
-        User user = userDBService.readUserFromDB(Integer.parseInt(cardIdTxt.getText()));
-        Reader reader = readerDBService.readReaderFromDB(user.getIdUser());
-        int readerId = reader.getIdReader();
-
-        List<BookTransfer> reservedUserBooks = bookTransfer.getReservedUserBooks(readerId);
-        List<BookTransfer> lentUserBooks = bookTransfer.getLentUserBooks(readerId);
-
-        if(reservedUserBooks.size() == 0)
-            noReservedBooks.setText("Brak zarezerwowanych książek.");
-        if(lentUserBooks.size() == 0)
-            noBorrowedBooks.setText("Brak wypożyczonych książek.");
-
         createComps();
 
-        createLentBooks(lentUserBooks);
-        createReservedBooks(reservedUserBooks);
+        List<BookTransfer> reservedUserBooks = bookTransfer.getReservedUserBooks(idReader);
+        List<BookTransfer> lentUserBooks = bookTransfer.getLentUserBooks(idReader);
 
-        addItems();
+        if(reservedUserBooks.size() > 0){
+            createReservedBooks(reservedUserBooks);
+            add(scrollPane);
+        } else {
+            reservedBooksLabel.setText("Brak zarezerwowanych książek.");
+        }
+        if(lentUserBooks.size() > 0) {
+            createLentBooks(lentUserBooks);
+            add(scrollPane2);
+        } else {
+            lentBooksLabel.setText("Brak wypożyczonych książek.");
+        }
+
+        addComps();
         action();
-
     }
 
     private void createReservedBooks(List<BookTransfer> bookList){
@@ -66,73 +72,64 @@ public class BookShowPanel extends JPanel {
             listModel.addElement(aBookList);
         }
         reservedBooks.setModel(listModel);
-        JScrollPane listScroller = new JScrollPane(reservedBooks);
-        listScroller.setPreferredSize(new Dimension(250, 80));
     }
 
     private void createLentBooks(List<BookTransfer> bookList) {
 
-        DefaultListModel<BookTransfer> listModel = new DefaultListModel<>();
+        DefaultListModel<BookTransfer> listModel2 = new DefaultListModel<>();
         for (BookTransfer aBookList : bookList) {
-            listModel.addElement(aBookList);
+            listModel2.addElement(aBookList);
         }
-        lentBooks.setModel(listModel);
-        JScrollPane listScroller = new JScrollPane(lentBooks);
-        listScroller.setPreferredSize(new Dimension(250, 80));
+        lentBooks.setModel(listModel2);
     }
 
-    private void addItems() {
+    private void addComps() {
 
-        add(reservedBooksLabel);
         add(resignBook);
-        add(reservedBooks);
+        add(reservedBooksLabel);
         add(lentBooksLabel);
-        add(lentBooks);
-        add(returnBtn);
-
+        add(searchBooks);
     }
 
     private void createComps(){
 
-        reservedBooksLabel = new JLabel("zarezerowane książki:");
-        reservedBooksLabel.setBounds(50,70,200,30);
-
         resignBook = new MyButton(true);
         resignBook.setText("Rezygnuj");
-        resignBook.setBounds(450,70,200,30);
+        resignBook.setBounds(400,170,200,30);
 
-        reservedBooks = new JList<>();
-        reservedBooks.setBounds(50,110,600,100);
-        reservedBooks.setBorder(BorderFactory.createLineBorder(Color.black));
+        searchBooks = new MyButton(true);
+        searchBooks.setText("Szukaj książki");
+        searchBooks.setBounds(400,20,200,30);
 
-        noReservedBooks = new JLabel();
-        noReservedBooks.setBounds(50,110,600,100);
-        noReservedBooks.setBackground(Color.white);
-        noReservedBooks.setBorder(BorderFactory.createLineBorder(Color.black));
-        noReservedBooks.setVerticalAlignment(1);
-        noReservedBooks.setOpaque(true);
+        reservedBooks = new JList();
+        reservedBooks.setBounds(50,60,550,100);
 
-        lentBooksLabel = new JLabel("wypożyczone książki:");
-        lentBooksLabel.setBounds(50,230,200,30);
+        scrollPane = new JScrollPane(reservedBooks);
+        scrollPane.setBounds(50,60,550,100);
+        scrollPane.setBorder(new TitledBorder("Zarezerowane książki"));
+        scrollPane.setBackground(Color.white);
 
-        lentBooks = new JList<>();
-        lentBooks.setBounds(50,270,600,100);
-        lentBooks.setBorder(BorderFactory.createLineBorder(Color.black));
+        reservedBooksLabel = new JLabel();
+        reservedBooksLabel.setBounds(50,60,550,100);
+        reservedBooksLabel.setBorder(new TitledBorder("Zarezerwowane książki:"));
+        reservedBooksLabel.setBackground(Color.white);
+        reservedBooksLabel.setOpaque(true);
+        reservedBooksLabel.setVerticalAlignment(1);
 
-        noBorrowedBooks = new JLabel();
-        noBorrowedBooks.setBounds(50,270,600,100);
-        noBorrowedBooks.setBackground(Color.white);
-        noBorrowedBooks.setBorder(BorderFactory.createLineBorder(Color.black));
-        noBorrowedBooks.setVerticalAlignment(1);
-        noBorrowedBooks.setOpaque(true);
+        lentBooks = new JList();
+        lentBooks.setBounds(50,220,550,100);
 
-        returnBtn = new MyButton(false);
-        returnBtn.setText("Cofnij");
-        returnBtn.setBounds(450,380,200,30);
+        scrollPane2 = new JScrollPane(lentBooks);
+        scrollPane2.setBounds(50,220,550,100);
+        scrollPane2.setBorder(new TitledBorder("Wypożyczone książki"));
+        scrollPane2.setBackground(Color.white);
 
-        cardIdTxt = new JLabel();
-        cardIdTxt.setBounds(30,30, 30,20);
-        cardIdTxt.setVisible(false);
+        lentBooksLabel = new JLabel();
+        lentBooksLabel.setBounds(50,220,550,100);
+        lentBooksLabel.setBorder(new TitledBorder("Wypożyczone książki:"));
+        lentBooksLabel.setBackground(Color.white);
+        lentBooksLabel.setOpaque(true);
+        lentBooksLabel.setVerticalAlignment(1);
 
     }
 
@@ -142,30 +139,25 @@ public class BookShowPanel extends JPanel {
 
             List<BookTransfer> book = reservedBooks.getSelectedValuesList();
 
-            for (BookTransfer aBook : book) {
-                bookTransfer.unReserveBook(aBook.getAuthorBook().getBook().getBookId());
-                JOptionPane.showMessageDialog(this, "Zrezygnowano z książki.");
-            }
+            if(book.size() > 0 ) {
+                for (BookTransfer aBook : book) {
+                    bookTransfer.unReserveBook(aBook.getAuthorBook().getBook().getBookId());
+                    bookService.setBookAvailability(aBook.getAuthorBook().getBook().getBookId(), true);
+                }
 
-            if(book.size() == 0)
+                List<BookTransfer> reservedUserBooks = bookTransfer.getReservedUserBooks(idReader);
+                if(reservedUserBooks.size() > 0){
+                    createReservedBooks(reservedUserBooks);
+                } else {
+                    reservedBooksLabel.setText("Brak zarezerowanych książek.");
+                }
+
+                JOptionPane.showMessageDialog(this, "Zrezygnowano z książek.");
+            } else {
                 JOptionPane.showMessageDialog(this, "Żadna książka nie została wybrana.");
+            }
         });
     }
 
-    private void createCardIdTxt(){
-        cardIdTxt = new JLabel();
-        cardIdTxt.setBounds(30,30, 30,20);
-    }
-
-    public JLabel getCardIdTxt() {
-        return cardIdTxt;
-    }
-
-    public void setCardIdTxt(JLabel cardIdTxt) {
-        this.cardIdTxt = cardIdTxt;
-    }
-
-    public MyButton getReturnBtn() {
-        return returnBtn;
-    }
+    public MyButton getSearchBooks(){return searchBooks;}
 }
