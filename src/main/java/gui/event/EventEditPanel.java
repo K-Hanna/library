@@ -71,6 +71,8 @@ public class EventEditPanel extends JPanel {
     private void addActionBrowsePosterBtn(){
         browsePosterBtn.addActionListener(e -> {
             fileChooser = new JFileChooser("C:\\Users\\e495405\\Desktop\\Baza danych zdjęcia\\biblio\\postery\\200_300");
+            fileChooser.addChoosableFileFilter(new ImageFilter());
+            fileChooser.setAcceptAllFileFilterUsed(false);
             int r = fileChooser.showOpenDialog(this);
             if(r == JFileChooser.APPROVE_OPTION) {
                 getPosterTxt().setText(fileChooser.getSelectedFile().getAbsolutePath());

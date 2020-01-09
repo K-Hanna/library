@@ -5,7 +5,7 @@ public class Book{
     private String title, genre, publisher, language;
     private long ISBN;
     private Bookshelf bookshelf;
-    private int bookId;
+    private int bookId, bookshelfId;
     private boolean isAvailable;
 
     public Book(){

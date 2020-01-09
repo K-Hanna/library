@@ -331,6 +331,8 @@ public class AuthorBookService implements IAuthorBook{
         }
     }
 
+
+
     @Override
     public List<AuthorBook> getNotLocatedBooks() {
         List<AuthorBook> booksOfSearch = new ArrayList<>();
@@ -339,7 +341,7 @@ public class AuthorBookService implements IAuthorBook{
 
         SQL = "select * from author_book inner join book on author_book.book_id = book.book_id " +
                 "inner join author on author.author_id = author_book.author_id " +
-                "where bookshelf_id = 126 order by last_name;";
+                "where book.bookshelf_id is null order by last_name;";
 
         try  {
             preparedStatement = connection.prepareStatement(SQL);
@@ -352,7 +354,9 @@ public class AuthorBookService implements IAuthorBook{
                 author.setFirstName(rs.getString("first_name"));
                 author.setLastName(rs.getString("last_name"));
                 author.setAuthorId(rs.getInt("author_id"));
+                Bookshelf bookshelf = new Bookshelf("-", "-", 0);
                 book.setTitle(rs.getString("title"));
+                book.setBookshelf(bookshelf);
                 book.setPublisher(rs.getString("publisher"));
                 book.setLanguage(rs.getString("lang"));
                 book.setGenre(rs.getString("genre"));

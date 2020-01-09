@@ -31,8 +31,10 @@ public class BookEditPanel extends JPanel {
         this.bookIdToEdit = bookGetPanel.getBookIdToEdit();
         this.authorIdToEdit = bookGetPanel.getAuthorIdToEdit();
         book = bookService.getBook(bookIdToEdit);
+        if(book == null)
+            book = bookService.getNullBook(bookIdToEdit);
         author = authorService.getAuthor(authorIdToEdit);
-
+        
         setLayout(null);
 
         createComps();
@@ -41,6 +43,7 @@ public class BookEditPanel extends JPanel {
     }
 
     private void createComps() {
+
         titleLabel = new JLabel("Tytuł:");
         titleLabel.setBounds(50, 20, 100, 30);
 

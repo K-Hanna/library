@@ -19,7 +19,7 @@ public class BookshelfService implements IBookshelf{
         PreparedStatement preparedStatement = null;
 
         int bookshelfId = 0;
-        String SQL = "select bookshelf_id from bookshelves where alley = ? and bookstand = ? and shelf = ?;";
+        String SQL = "select bookshelf_id from bookshelves where alley = ? and bookstand = ? and shelf = ? or null;";
 
         try  {
             preparedStatement = connection.prepareStatement(SQL);
@@ -49,7 +49,7 @@ public class BookshelfService implements IBookshelf{
         PreparedStatement preparedStatement = null;
 
         List<String> listOfAlleys = new ArrayList<>();
-//        listOfAlleys.add("-");
+        listOfAlleys.add("-");
         String SQL = "select distinct alley from bookshelves order by alley;";
 
         try  {
@@ -78,7 +78,7 @@ public class BookshelfService implements IBookshelf{
         PreparedStatement preparedStatement = null;
 
         List<String> listOfBookstands = new ArrayList<>();
-//        listOfBookstands.add("-");
+        listOfBookstands.add("-");
 
         String SQL = "select distinct bookstand from bookshelves order by bookstand;";
 
@@ -108,7 +108,7 @@ public class BookshelfService implements IBookshelf{
         PreparedStatement preparedStatement = null;
 
         List<String> listOfShelves = new ArrayList<>();
-//        listOfShelves.add("0");
+        listOfShelves.add("0");
 
         String SQL = "select distinct shelf from bookshelves order by shelf;";
 
