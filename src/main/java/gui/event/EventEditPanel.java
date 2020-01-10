@@ -204,10 +204,6 @@ public class EventEditPanel extends JPanel {
         return posterTxt;
     }
 
-    public void setPosterTxt(JTextField posterTxt) {
-        this.posterTxt = posterTxt;
-    }
-
     public MyButton getCancel() {
         return cancel;
     }

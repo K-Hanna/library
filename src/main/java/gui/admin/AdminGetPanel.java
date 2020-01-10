@@ -19,10 +19,9 @@ import user.UserDBServiceImpl;
 
 public class AdminGetPanel extends JPanel {
 
-    private JList<Admin> resultList;
+    private static JList<Admin> resultList;
     private MyButton create, remove, show;
     private JScrollPane scrollPane;
-    private int adminCard;
 
     private IAdminDBService adminDBService = new AdminDBServiceImpl();
     private IUserDBService userDBService = new UserDBServiceImpl();
@@ -40,7 +39,7 @@ public class AdminGetPanel extends JPanel {
         actions();
     }
 
-    private void createAdminsJList(List<Admin> admins){
+    static void createAdminsJList(List<Admin> admins){
 
         DefaultListModel listModel = new DefaultListModel();
         for (Admin admin : admins) {
@@ -116,15 +115,15 @@ public class AdminGetPanel extends JPanel {
         return adminCard;
     }
 
-    public MyButton getShow(){
+    MyButton getShow(){
         return show;
     }
 
-    public MyButton getCreate(){
+    MyButton getCreate(){
         return create;
     }
 
-    public JList getResultList(){
+    JList getResultList(){
         return resultList;
     }
 }

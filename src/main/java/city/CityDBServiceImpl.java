@@ -92,6 +92,4 @@ public class CityDBServiceImpl implements ICityDBService {
             closeDBResources(connection,preparedStatement);
         }
     }
-
-
 }

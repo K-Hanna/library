@@ -5,13 +5,10 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.util.List;
 
-import book.*;
 import event.Event;
 import event.EventDBServiceImpl;
 import event.IEventDBService;
 import gui.general.MyButton;
-import reader.IReaderDBService;
-import reader.ReaderDBServiceImpl;
 
 public class EventGetPanel extends JPanel {
 

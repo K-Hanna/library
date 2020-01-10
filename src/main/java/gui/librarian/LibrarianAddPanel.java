@@ -18,6 +18,7 @@ import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.time.LocalDate;
+import java.util.List;
 
 public class LibrarianAddPanel extends JPanel {
     private JLabel firstNameLbl, lastNamelbl, emailLbl, passLbl, cardIdLbl, postalCodeLbl, cityNameLbl, streetAndBuildingLbl;
@@ -101,9 +102,12 @@ public class LibrarianAddPanel extends JPanel {
                 librarian.setSalary(salaryTxt.getText());
                 librarianDBService.addLibrarianInDB(librarian);
 
-                JOptionPane.showMessageDialog(this, "Nowy bibliotekarz został dodany do bazy \n Numer karty: " + cardForNewUser.getIdCard());
+                JOptionPane.showMessageDialog(this, "Nowy bibliotekarz został dodany do bazy \nNumer karty: " + cardForNewUser.getIdCard());
                 setComponentsEditability(false);
                 cardIdTxt.setEditable(false);
+
+                List<Librarian> librarians = librarianDBService.getAllLibrariansFromDB();
+                LibrarianGetPanel.createLibrariansJList(librarians);
             }
         });
 

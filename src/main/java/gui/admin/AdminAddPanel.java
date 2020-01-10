@@ -10,8 +10,6 @@ import city.CityDBServiceImpl;
 import city.ICityDBService;
 import config.Validation;
 import gui.general.MyButton;
-import librarian.ILibrarianDBService;
-import librarian.LibrarianDBServiceImpl;
 import user.IUserDBService;
 import user.User;
 import user.UserDBServiceImpl;
@@ -19,6 +17,7 @@ import user.UserDBServiceImpl;
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.List;
 
 public class AdminAddPanel extends JPanel {
     private JLabel firstNameLbl, lastNamelbl, emailLbl, passLbl, cardIdLbl, postalCodeLbl, cityNameLbl, streetAndBuildingLbl;
@@ -103,6 +102,9 @@ public class AdminAddPanel extends JPanel {
                 JOptionPane.showMessageDialog(this, "Nowy administrator został dodany do bazy \nNumer karty: " + cardForNewUser.getIdCard());
                 setComponentsEditability(false);
                 cardIdTxt.setEditable(false);
+
+                List<Admin> admins = adminDBService.getAllAdminsFromDB();
+                AdminGetPanel.createAdminsJList(admins);
             }
         });
 

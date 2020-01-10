@@ -15,6 +15,7 @@ public class AdminTabbedPanel extends JPanel {
     private LibraryDataPanel libraryDataPanel = new LibraryDataPanel();
     private LibrarianGetPanel librarianGetPanel = new LibrarianGetPanel();
     private AdminGetPanel adminGetPanel = new AdminGetPanel();
+    private AdminAddBookshelfPanel adminAddBookshelfPanel = new AdminAddBookshelfPanel();
 
     private JTabbedPane tabbedPane = new JTabbedPane();
 
@@ -44,6 +45,7 @@ public class AdminTabbedPanel extends JPanel {
         tabbedPane.insertTab(start + "Dane o bibliotece" + finish, null, libraryDataPanel, null, 0);
         tabbedPane.insertTab(start + "Bibliotekarze" + finish, null, librarianGetPanel, null, 1);
         tabbedPane.insertTab(start + "Administratorzy" + finish, null, adminGetPanel, null, 2);
+        tabbedPane.insertTab(start + "Lokalizacje" + finish, null, adminAddBookshelfPanel, null, 3);
 
         add(tabbedPane);
     }

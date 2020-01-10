@@ -9,21 +9,6 @@ public class Reader extends User {
 
     public Reader(){}
 
-/*    public Reader(int idReader, int idUser){
-        this.idReader = idReader;
-        this.idUser = idUser;
-    }
-
-    public Reader(int idUser){
-        this.idUser = idUser;
-    }
-
-    public Reader(String firstName, String lastName, String email, String password, String streetBuilding, String postalCode, int idReader, int idUser) {
-        super(firstName, lastName, email, password, streetBuilding, postalCode);
-        this.idReader = idReader;
-        this.idUser = idUser;
-    }*/
-
     public int getIdReader() {return idReader; }
 
     public void setIdReader(int idReader) {

@@ -1,8 +1,5 @@
 package user;
 
-
-import card.Card;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -316,7 +313,5 @@ public class UserDBServiceImpl implements IUserDBService {
         finally {
             closeDBResources(connection,preparedStatement);
         }
-
-
     }
 }

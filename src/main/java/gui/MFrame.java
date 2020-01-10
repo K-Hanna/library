@@ -36,7 +36,7 @@ public class MFrame extends JFrame {
         int posY = height / 2 - getHeight() / 2;
         setLocation(posX, posY);
 
-//----------------login panel----------------
+        //----------------login panel----------------
 
         loginPanel = new LoginPanel();
         add(loginPanel);

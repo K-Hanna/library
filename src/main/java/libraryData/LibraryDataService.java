@@ -1,8 +1,5 @@
 package libraryData;
 
-import book.Book;
-import book.Bookshelf;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

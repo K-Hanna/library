@@ -1,6 +1,7 @@
 package gui.bookTransfer;
 
 import book.*;
+import bookTransfer.BookTransfer;
 import bookTransfer.BookTransferService;
 import bookTransfer.IBookTransfer;
 import gui.general.MyButton;
@@ -149,6 +150,9 @@ public class BookReservePanel extends JPanel {
                 }
                 JOptionPane.showMessageDialog(this, iBookTransfer.getMessage());
 
+                List<BookTransfer> reservedUserBooks = iBookTransfer.getReservedUserBooks(readerId);
+                BookShowPanel.createReservedBooks(reservedUserBooks);
+
             }
         });
     }
@@ -169,11 +173,11 @@ public class BookReservePanel extends JPanel {
         return cancel;
     }
 
-    public JLabel getCardIdTxt() {
+    JLabel getCardIdTxt() {
         return cardIdTxt;
     }
 
-    public void setCardIdTxt(JLabel cardIdTxt) {
+    void setCardIdTxt(JLabel cardIdTxt) {
         this.cardIdTxt = cardIdTxt;
     }
 }

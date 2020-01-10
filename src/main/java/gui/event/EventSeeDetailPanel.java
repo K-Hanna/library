@@ -1,6 +1,5 @@
 package gui.event;
 
-import config.Validation;
 import event.Event;
 import event.EventDBServiceImpl;
 import event.IEventDBService;
@@ -9,12 +8,8 @@ import images.IPosterDBService;
 import images.Poster;
 import images.PosterDBServiceImpl;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDate;
 
 public class EventSeeDetailPanel extends JPanel {
     private JLabel titleLbl, dateLbl, shortDescLbl, posterShowLbl;

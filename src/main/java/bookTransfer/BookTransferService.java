@@ -149,7 +149,7 @@ public class BookTransferService implements IBookTransfer {
     public void lendBook(int userId, int bookId) {
 
         SQL = "INSERT INTO lending (book_id, reader_id, creationdate, duedate) " +
-                "VALUES ((SELECT book_id FROM author_book WHERE book_id = ?), ?, ?, ?);";
+                "VALUES ((SELECT book_id FROM author_book WHERE book_id = ? limit 1), ?, ?, ?);";
 
         Connection connection = initializeDataBaseConnection();
         PreparedStatement preparedStatement = null;

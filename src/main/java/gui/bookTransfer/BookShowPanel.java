@@ -6,15 +6,10 @@ import bookTransfer.BookTransfer;
 import bookTransfer.BookTransferService;
 import bookTransfer.IBookTransfer;
 import gui.general.MyButton;
-import gui.reader.ReaderEntryPanel;
 import gui.reader.ReaderTabbedPanel;
-import gui.reader.ReaderUpdatePanel;
 import reader.IReaderDBService;
 import reader.Reader;
 import reader.ReaderDBServiceImpl;
-import user.IUserDBService;
-import user.User;
-import user.UserDBServiceImpl;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -29,7 +24,7 @@ public class BookShowPanel extends JPanel {
 
     private JLabel reservedBooksLabel, lentBooksLabel;
     private MyButton resignBook, searchBooks;
-    private JList<BookTransfer> lentBooks, reservedBooks;
+    private static JList<BookTransfer> lentBooks, reservedBooks;
     private JScrollPane scrollPane, scrollPane2;
     private Reader reader;
 
@@ -65,7 +60,7 @@ public class BookShowPanel extends JPanel {
         action();
     }
 
-    private void createReservedBooks(List<BookTransfer> bookList){
+    static void createReservedBooks(List<BookTransfer> bookList){
 
         DefaultListModel<BookTransfer> listModel = new DefaultListModel<>();
         for (BookTransfer aBookList : bookList) {

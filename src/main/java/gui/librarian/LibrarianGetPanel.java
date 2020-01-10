@@ -18,7 +18,7 @@ import user.UserDBServiceImpl;
 
 public class LibrarianGetPanel extends JPanel {
 
-    private JList<Librarian> resultList;
+    private static JList<Librarian> resultList;
     private MyButton create, remove, show;
     private JScrollPane scrollPane;
 
@@ -38,7 +38,7 @@ public class LibrarianGetPanel extends JPanel {
         actions();
     }
 
-    private void createLibrariansJList(List<Librarian> librarians){
+    static void createLibrariansJList(List<Librarian> librarians){
 
         DefaultListModel listModel = new DefaultListModel();
         for (Librarian librarian : librarians) {

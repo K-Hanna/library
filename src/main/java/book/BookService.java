@@ -172,8 +172,8 @@ public class BookService implements IBook {
             preparedStatement.setInt(9, shelf);
             preparedStatement.setString(10, title);
 
-                preparedStatement.executeUpdate();
-                message = "Książka została dodana do bazy.";
+            preparedStatement.executeUpdate();
+            message = "Książka została dodana do bazy.";
 
         } catch (SQLException e) {
             System.err.println("Error during invoke SQL query: \n" + e.getMessage());

@@ -151,34 +151,6 @@ public class EventDBServiceImpl implements IEventDBService {
     }
 
     @Override
-    public Event readLastEventFromDB() {
-        Connection connection = initializeDataBaseConnection();
-        PreparedStatement preparedStatement = null;
-
-        try {
-            String queryReadEvent = "SELECT * FROM event order by idevent desc limit 1;";
-            preparedStatement = connection.prepareStatement(queryReadEvent);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            Event event = new Event();
-            while (resultSet.next()){
-                event.setIdEvent(resultSet.getInt("idevent"));
-                event.setDateEvent(resultSet.getDate("dateevent").toLocalDate());
-                event.setTitle(resultSet.getString("title"));
-                event.setImgId(resultSet.getInt("imgid"));
-                event.setShortDescription(resultSet.getString("shortdesc"));
-            }
-            return event;
-        }
-        catch (SQLException e){
-            System.err.println("Error during invoke SQL query: \n" + e.getMessage());
-            throw  new RuntimeException("Error during invoke SQL query");
-        }
-        finally {
-            closeDBResources(connection,preparedStatement);
-        }
-    }
-
-    @Override
     public List<Event> getAllEventsFromDB(int sort1, int sort2) {
         List<Event> eventList = new ArrayList<>();
         Connection connection = initializeDataBaseConnection();

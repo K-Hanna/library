@@ -1,6 +1,5 @@
 package librarian;
 
-import reader.Reader;
 import user.IUserDBService;
 import user.User;
 import user.UserDBServiceImpl;
@@ -161,6 +160,5 @@ public class LibrarianDBServiceImpl implements ILibrarianDBService {
         finally {
             closeDBResources(connection,preparedStatement);
         }
-
     }
 }

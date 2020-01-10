@@ -79,34 +79,6 @@ public class ReaderDBServiceImpl implements IReaderDBService {
     }
 
     @Override
-    public List<Reader> getAllReadersFromDB() {
-        IUserDBService userDBService = new UserDBServiceImpl();
-        List<User> userList = userDBService.getAllUsersFromDB();
-        List<Reader> readerList = new ArrayList<>();
-
-        try {
-            for (User u : userList) {
-                Reader reader = readReaderFromDB(u.getIdUser());
-                if (reader.getIdReader() != 0) {
-                    reader.setIdUser(u.getIdUser());
-                    reader.setFirstName(u.getFirstName());
-                    reader.setLastName(u.getLastName());
-                    reader.setCardNumber(u.getCardNumber());
-                    reader.setEmail(u.getEmail());
-                    reader.setPassword(u.getPassword());
-                    reader.setPostalCode(u.getPostalCode());
-                    reader.setStreetBuilding(u.getStreetBuilding());
-                    readerList.add(reader);
-                }
-            }
-            return readerList;
-        } catch (Exception e) {
-            System.err.println("Error during invoke SQL query: \n" + e.getMessage());
-            throw new RuntimeException("Error during invoke SQL query");
-        }
-    }
-
-    @Override
     public List<Integer> getReadersCards() {
 
         Connection connection = initializeDataBaseConnection();
@@ -281,22 +253,5 @@ public class ReaderDBServiceImpl implements IReaderDBService {
         finally {
             closeDBResources(connection,preparedStatement);
         }
-    }
-
-
-
-    @Override
-    public void chooseBook() {
-
-    }
-
-    @Override
-    public void makeReservation() {
-
-    }
-
-    @Override
-    public void seeListOfBorrows() {
-
     }
 }

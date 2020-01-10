@@ -35,6 +35,7 @@ public class ReaderEditPanel extends JPanel {
 
         createButtons();
         createFields();
+        setTextFields();
         addComps();
         setComponentsEditability(false);
         setPostalCodeKL();
@@ -64,6 +65,7 @@ public class ReaderEditPanel extends JPanel {
 
         cancel.addActionListener(e ->{
             setComponentsEditability(false);
+            setTextFields();
             confirm.setVisible(false);
             edit.setVisible(true);
         });
@@ -139,7 +141,6 @@ public class ReaderEditPanel extends JPanel {
 
         firstNameTxt = new JTextField();
         firstNameTxt.setBounds(150, 60, fieldLength, 30);
-        firstNameTxt.setText(user.getFirstName());
 
         lastNamelbl = new JLabel();
         lastNamelbl.setText("Nazwisko");
@@ -147,7 +148,6 @@ public class ReaderEditPanel extends JPanel {
 
         lastNameTxt = new JTextField();
         lastNameTxt.setBounds(150, 100, fieldLength, 30);
-        lastNameTxt.setText(user.getLastName());
 
         emailLbl = new JLabel();
         emailLbl.setText("Email");
@@ -155,7 +155,6 @@ public class ReaderEditPanel extends JPanel {
 
         emailTxt = new JTextField();
         emailTxt.setBounds(150, 140, fieldLength, 30);
-        emailTxt.setText(user.getEmail());
 
         streetAndBuildingLbl = new JLabel();
         streetAndBuildingLbl.setText("Ulica/nr");
@@ -163,7 +162,6 @@ public class ReaderEditPanel extends JPanel {
 
         streetAndBuildingTxt = new JTextField();
         streetAndBuildingTxt.setBounds(150, 180, fieldLength, 30);
-        streetAndBuildingTxt.setText(user.getStreetBuilding());
 
         postalCodeLbl = new JLabel();
         postalCodeLbl.setText("Kod pocztowy");
@@ -171,7 +169,6 @@ public class ReaderEditPanel extends JPanel {
 
         postalCodeTxt = new JTextField();
         postalCodeTxt.setBounds(150, 220, fieldLength, 30);
-        postalCodeTxt.setText(user.getPostalCode());
 
         cityNameLbl = new JLabel();
         cityNameLbl.setText("Miasto");
@@ -179,7 +176,6 @@ public class ReaderEditPanel extends JPanel {
 
         cityNameTxt = new JTextField();
         cityNameTxt.setBounds(150, 260, fieldLength, 30);
-        cityNameTxt.setText(cityDBService.getCityName(postalCodeTxt.getText()));
         cityNameTxt.setEditable(false);
 
         passLbl = new JLabel();
@@ -187,9 +183,18 @@ public class ReaderEditPanel extends JPanel {
         passLbl.setBounds(50, 300, 100, 30);
 
         passField = new JPasswordField();
-        passField.setText(user.getPassword());
         passField.setBounds(150, 300, fieldLength, 30);
 
+    }
+
+    private void setTextFields(){
+        firstNameTxt.setText(user.getFirstName());
+        lastNameTxt.setText(user.getLastName());
+        emailTxt.setText(user.getEmail());
+        streetAndBuildingTxt.setText(user.getStreetBuilding());
+        postalCodeTxt.setText(user.getPostalCode());
+        cityNameTxt.setText(cityDBService.getCityName(postalCodeTxt.getText()));
+        passField.setText(user.getPassword());
     }
 
     private void addComps() {

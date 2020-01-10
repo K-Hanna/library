@@ -163,24 +163,32 @@ public class BookTransferPanel extends JPanel {
 
             List<BookTransfer> book = reservedBooks.getSelectedValuesList();
 
-            User user = userDBService.readUserFromDB(Integer.parseInt(userId.getText()));
-            Reader reader = readerDBService.readReaderFromDB(user.getIdUser());
-            readerId = reader.getIdReader();
+            if(book.size() > 0) {
+                User user = userDBService.readUserFromDB(Integer.parseInt(userId.getText()));
+                Reader reader = readerDBService.readReaderFromDB(user.getIdUser());
+                readerId = reader.getIdReader();
 
-            for (BookTransfer aBook : book) {
-                bookTransfer.lendBook(readerId, aBook.getAuthorBook().getBook().getBookId());
-                bookTransfer.unReserveBook(aBook.getAuthorBook().getBook().getBookId());
-                bookService.setBookAvailability(aBook.getAuthorBook().getBook().getBookId(), false);
-            }
+                for (BookTransfer aBook : book) {
+                    bookTransfer.lendBook(readerId, aBook.getAuthorBook().getBook().getBookId());
+                    bookTransfer.unReserveBook(aBook.getAuthorBook().getBook().getBookId());
+                    bookService.setBookAvailability(aBook.getAuthorBook().getBook().getBookId(), false);
+                }
 
-            List<BookTransfer> reservedUserBooks = bookTransfer.getReservedUserBooks(readerId);
-            List<BookTransfer> lentUserBooks = bookTransfer.getLentUserBooks(readerId);
-            createReservedBooks(reservedUserBooks);
-            createLentBooks(lentUserBooks);
+                List<BookTransfer> reservedUserBooks = bookTransfer.getReservedUserBooks(readerId);
+                List<BookTransfer> lentUserBooks = bookTransfer.getLentUserBooks(readerId);
+                createReservedBooks(reservedUserBooks);
+                createLentBooks(lentUserBooks);
 
-            JOptionPane.showMessageDialog(this, bookTransfer.getMessage());
+                if(lentUserBooks.size() >= 3){
+                    lendBook.setEnabled(false);
+                    lendBook.setContentAreaFilled(false);
+                } else {
+                    lendBook.setEnabled(true);
+                    lendBook.setContentAreaFilled(true);
+                }
 
-            if(book.size() == 0)
+                JOptionPane.showMessageDialog(this, bookTransfer.getMessage());
+            } else
                 JOptionPane.showMessageDialog(this, "Żadna książka nie została wybrana.");
         });
 
@@ -199,6 +207,13 @@ public class BookTransferPanel extends JPanel {
                 List<BookTransfer> lentUserBooks = bookTransfer.getLentUserBooks(readerId);
                 createLentBooks(lentUserBooks);
 
+                if(lentUserBooks.size() >= 3){
+                    lendBook.setEnabled(false);
+                    lendBook.setContentAreaFilled(false);
+                } else {
+                    lendBook.setEnabled(true);
+                    lendBook.setContentAreaFilled(true);
+                }
                 JOptionPane.showMessageDialog(this, bookTransfer.getMessage());
             }
         });

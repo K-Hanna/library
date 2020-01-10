@@ -39,7 +39,58 @@ public class BookshelfService implements IBookshelf{
         finally {
             closeDBResources(connection,preparedStatement);
         }
+    }
 
+    @Override
+    public void addBookshelf(String alley, String bookstand, int shelf) {
+
+        Connection connection = initializeDataBaseConnection();
+        PreparedStatement preparedStatement = null;
+
+        String SQL = "insert into bookshelves (alley, bookstand, shelf) select ?, ?, ? where not exists" +
+                "(select 1 from bookshelves where alley = ? and bookstand = ? and shelf = ?);";
+
+        try  {
+            preparedStatement = connection.prepareStatement(SQL);
+
+            preparedStatement.setString(1, alley);
+            preparedStatement.setString(2, bookstand);
+            preparedStatement.setInt(3,shelf);
+            preparedStatement.setString(4, alley);
+            preparedStatement.setString(5, bookstand);
+            preparedStatement.setInt(6, shelf);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Error during invoke SQL query: \n" + e.getMessage());
+            throw  new RuntimeException("Error during invoke SQL query");
+        }
+        finally {
+            closeDBResources(connection,preparedStatement);
+        }
+    }
+
+    @Override
+    public void removeBookshelf(String alley, String bookstand, int shelf) {
+
+        String SQL = "delete from bookshelves where alley = ? and bookstand = ? and shelf = ?;";
+        Connection connection = initializeDataBaseConnection();
+        PreparedStatement preparedStatement = null;
+
+        try  {
+            preparedStatement = connection.prepareStatement(SQL);
+            preparedStatement.setString(1, alley);
+            preparedStatement.setString(2, bookstand);
+            preparedStatement.setInt(3, shelf);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e){
+            System.err.println("Error during invoke SQL query: \n" + e.getMessage());
+            throw  new RuntimeException("Error during invoke SQL query");
+        }
+        finally {
+            closeDBResources(connection,preparedStatement);
+        }
     }
 
     @Override
@@ -67,7 +118,6 @@ public class BookshelfService implements IBookshelf{
         finally {
             closeDBResources(connection,preparedStatement);
         }
-
         return listOfAlleys.toArray(new String[0]);
     }
 
@@ -97,7 +147,6 @@ public class BookshelfService implements IBookshelf{
         finally {
             closeDBResources(connection,preparedStatement);
         }
-
         return listOfBookstands.toArray(new String[0]);
     }
 
@@ -127,7 +176,6 @@ public class BookshelfService implements IBookshelf{
         finally {
             closeDBResources(connection,preparedStatement);
         }
-
         return listOfShelves.toArray(new String[0]);
     }
 }
