@@ -112,13 +112,13 @@ public class LibrarianAddPanel extends JPanel {
     private void createReturnBtn() {
         returnBtn = new MyButton(false);
         returnBtn.setText("Powrót");
-        returnBtn.setBounds(400, 300, 200, 30);
+        returnBtn.setBounds(400, 60, 200, 30);
     }
 
     private void createAddBtn() {
         addLibrarianBtn = new MyButton(true);
         addLibrarianBtn.setText("Wprowadź dane");
-        addLibrarianBtn.setBounds(400, 150, 200, 30);
+        addLibrarianBtn.setBounds(400, 20, 200, 30);
     }
 
     private void addAllLabels() {

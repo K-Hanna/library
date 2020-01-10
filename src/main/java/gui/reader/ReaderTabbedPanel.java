@@ -20,7 +20,7 @@ public class ReaderTabbedPanel extends JPanel {
     private int idUser;
 
     private MyButton logout;
-    private JLabel readerLabel, userId;
+    private JLabel readerLabel;
     private String start = "<html><body><table width='137' height='50'>";
     private String finish = "</table></body></html>";
 
@@ -32,7 +32,6 @@ public class ReaderTabbedPanel extends JPanel {
 
         createLogout();
         createReader();
-        createUser();
         createTabbedPane();
         action();
         createBackground();
@@ -67,16 +66,7 @@ public class ReaderTabbedPanel extends JPanel {
     private void createReader(){
         readerLabel = new JLabel();
         readerLabel.setBounds(45,470,500,30);
-        readerLabel.setText(String.valueOf(userId));
         add(readerLabel);
-    }
-
-    private void createUser(){
-        userId = new JLabel();
-        userId.setBounds(550,470,20,30);
-        userId.setText(String.valueOf(idUser));
-//        userId.setVisible(false);
-        add(userId);
     }
 
     private void action(){
@@ -89,7 +79,6 @@ public class ReaderTabbedPanel extends JPanel {
                 tabbedPane.setSelectedIndex(1);
 
                 bookReservePanel.getCancel().addActionListener(e3 -> {
-                    bookShowPanel = new BookShowPanel(this);
                     tabbedPane.insertTab(start + "Książki" + finish, null, bookShowPanel, null, 1);
                     tabbedPane.remove(bookReservePanel);
                     tabbedPane.setSelectedIndex(1);
@@ -126,15 +115,8 @@ public class ReaderTabbedPanel extends JPanel {
         return logout;
     }
 
-    public JLabel getUserId(){
-        return userId;
-    }
-
     public int getIdUser(){
         return idUser;
     }
 
-    /*public void setUserId(int Id){
-        this.userId = Id;
-    }*/
 }

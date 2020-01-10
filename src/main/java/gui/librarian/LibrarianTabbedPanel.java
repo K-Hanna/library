@@ -5,6 +5,7 @@ import gui.bookTransfer.BookTransferPanel;
 import gui.event.*;
 import gui.general.BackgroundLabel;
 import gui.general.MyButton;
+import gui.reader.ReaderShowDetailPanel;
 import gui.reader.ReadersShowAllPanel;
 
 import javax.swing.*;
@@ -102,7 +103,7 @@ public class LibrarianTabbedPanel extends JPanel {
 
                 BookTransferPanel bookTransferPanel = new BookTransferPanel();
 
-                bookTransferPanel.getUserId().setText(String.valueOf(readersShowAllPanel.getReadersBooks()));
+                bookTransferPanel.getUserId().setText(String.valueOf(readersShowAllPanel.getReadersCard()));
 
                 tabbedPane.insertTab(start + "Czytelnicy" + finish, null, bookTransferPanel, null, 2);
                 tabbedPane.remove(readersShowAllPanel);
@@ -114,6 +115,28 @@ public class LibrarianTabbedPanel extends JPanel {
                     tabbedPane.setSelectedIndex(2);
 
                 });
+        });
+
+        readersShowAllPanel.getShowReader().addActionListener(e -> {
+
+            if(!readersShowAllPanel.getResultList().isSelectionEmpty()){
+                ReaderShowDetailPanel readerShowDetailPanel = new ReaderShowDetailPanel(readersShowAllPanel);
+
+                readerShowDetailPanel.getCardIdTxt().setText(String.valueOf(readersShowAllPanel.getReadersCard()));
+
+                tabbedPane.insertTab(start + "Czytelnicy" + finish, null, readerShowDetailPanel, null, 2);
+                tabbedPane.remove(readersShowAllPanel);
+                tabbedPane.setSelectedIndex(2);
+
+                readerShowDetailPanel.getCancel().addActionListener(e3 -> {
+                    tabbedPane.insertTab(start + "Czytelnicy" + finish, null, readersShowAllPanel, null, 2);
+                    tabbedPane.remove(readerShowDetailPanel);
+                    tabbedPane.setSelectedIndex(2);
+
+                });
+            } else {
+                JOptionPane.showMessageDialog(this, "Żaden czytelnik nie został wybrany.");
+            }
         });
 
         eventGetPanel.getCreate().addActionListener(e -> {

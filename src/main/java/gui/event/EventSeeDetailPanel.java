@@ -85,6 +85,7 @@ public class EventSeeDetailPanel extends JPanel {
     private void createPosterShowLbl() {
         posterShowLbl = new JLabel();
         posterShowLbl.setBounds(400, 20, fieldLength, 300);
+        posterShowLbl.setBorder(BorderFactory.createLineBorder(Color.black));
         Poster poster = posterDBService.readImageById(event.getImgId());
         ImageIcon icon = new ImageIcon(poster.getImgBytes());
         posterShowLbl.setIcon(icon);

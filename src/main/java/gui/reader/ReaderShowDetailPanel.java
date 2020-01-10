@@ -2,7 +2,6 @@ package gui.reader;
 
 import city.CityDBServiceImpl;
 import city.ICityDBService;
-import config.Validation;
 import gui.general.MyButton;
 import user.IUserDBService;
 import user.User;
@@ -12,24 +11,23 @@ import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class ReaderEditPanel extends JPanel {
+public class ReaderShowDetailPanel extends JPanel {
 
     private JLabel firstNameLbl, lastNamelbl, emailLbl, passLbl, cardIdLbl, postalCodeLbl, cityNameLbl, streetAndBuildingLbl;
     private JTextField firstNameTxt, lastNameTxt, emailTxt, cardIdTxt, postalCodeTxt, cityNameTxt, streetAndBuildingTxt;
-    private JPasswordField passField;
-    private MyButton edit, confirm, cancel;
-    private int fieldLength = 200, idUser;
+    private JTextField passField;
+    private MyButton cancel;
+    private int fieldLength = 200, cardUser;
 
     private IUserDBService userDBService = new UserDBServiceImpl();
     private ICityDBService cityDBService = new CityDBServiceImpl();
 
     private User user;
 
-    public ReaderEditPanel(ReaderTabbedPanel readerTabbedPanel) {
+    public ReaderShowDetailPanel(ReadersShowAllPanel readersShowAllPanel) {
 
-        this.idUser = readerTabbedPanel.getIdUser();
-
-        user = userDBService.readUserFromDBById(idUser);
+        this.cardUser = readersShowAllPanel.getReadersCard();
+        user = userDBService.readUserFromDB(cardUser);
 
         setLayout(null);
 
@@ -38,7 +36,6 @@ public class ReaderEditPanel extends JPanel {
         addComps();
         setComponentsEditability(false);
         setPostalCodeKL();
-        action();
 
     }
 
@@ -53,73 +50,12 @@ public class ReaderEditPanel extends JPanel {
         });
     }
 
-    private void action() {
-
-        edit.addActionListener(e -> {
-            setComponentsEditability(true);
-            confirm.setVisible(true);
-            edit.setVisible(false);
-            cancel.setText("Anuluj");
-        });
-
-        cancel.addActionListener(e ->{
-            setComponentsEditability(false);
-            confirm.setVisible(false);
-            edit.setVisible(true);
-        });
-
-        confirm.addActionListener(e -> {
-            if(Validation.checkIfEmailOK(emailTxt.getText()) == false)
-                JOptionPane.showMessageDialog(this, "Niepoprawny email");
-            else if(Validation.checkIfPostalCodeOK(cityNameTxt.getText())==false)
-                JOptionPane.showMessageDialog(this, "Niepoprawny kod pocztowy");
-            else if(Validation.checkIfInteger(cardIdTxt.getText()) == false)
-                JOptionPane.showMessageDialog(this, "Niepoprawny numer karty użytkownika");
-            else if(firstNameTxt.getText().equals("") || lastNameTxt.getText().equals("")|| emailTxt.getText().equals("")||postalCodeTxt.getText().equals("")||streetAndBuildingTxt.getText().equals(""))
-                JOptionPane.showMessageDialog(this, "Proszę wypełnić wszystkie pola");
-            else {
-                int cardId = Integer.parseInt(cardIdTxt.getText());
-                User user = userDBService.readUserFromDB(cardId);
-                int userId = user.getIdUser();
-                String userFirstName = firstNameTxt.getText();
-                String userLastName = lastNameTxt.getText();
-                String userEmail = emailTxt.getText();
-                String userSteetBuilding = streetAndBuildingTxt.getText();
-                String userPostalCode = postalCodeTxt.getText();
-                StringBuilder pass = new StringBuilder();
-                for (char c : passField.getPassword())
-                    pass.append(c);
-                String userPass;
-                if (pass.toString().equals("------"))
-                    userPass = user.getPassword();
-                else
-                    userPass = pass.toString();
-
-                userDBService.updateUserInDB(userId, userFirstName, userLastName, userEmail, userPass, userSteetBuilding, userPostalCode, cardId);
-                setComponentsEditability(false);
-                confirm.setVisible(false);
-                edit.setVisible(true);
-                cancel.setText("Powrót");
-                JOptionPane.showMessageDialog(this, "Dane użytkownika zaktualizowane poprawnie");
-            }
-        });
-
-    }
-
     private void createButtons(){
-
-        confirm = new MyButton(true);
-        confirm.setText("Aktualizuj dane");
-        confirm.setVisible(false);
-        confirm.setBounds(400, 20, 200, 30);
 
         cancel = new MyButton(false);
         cancel.setText("Powrót");
-        cancel.setBounds(400, 60, 200, 30);
+        cancel.setBounds(400, 20, 200, 30);
 
-        edit = new MyButton(true);
-        edit.setText("Zmień dane");
-        edit.setBounds(400,20,200,30);
     }
 
     private void createFields(){
@@ -130,7 +66,6 @@ public class ReaderEditPanel extends JPanel {
 
         cardIdTxt = new JTextField();
         cardIdTxt.setBounds(150, 20, fieldLength, 30);
-        cardIdTxt.setEditable(false);
         cardIdTxt.setText(String.valueOf(user.getCardNumber()));
 
         firstNameLbl = new JLabel();
@@ -180,13 +115,12 @@ public class ReaderEditPanel extends JPanel {
         cityNameTxt = new JTextField();
         cityNameTxt.setBounds(150, 260, fieldLength, 30);
         cityNameTxt.setText(cityDBService.getCityName(postalCodeTxt.getText()));
-        cityNameTxt.setEditable(false);
 
         passLbl = new JLabel();
         passLbl.setText("Hasło");
         passLbl.setBounds(50, 300, 100, 30);
 
-        passField = new JPasswordField();
+        passField = new JTextField();
         passField.setText(user.getPassword());
         passField.setBounds(150, 300, fieldLength, 30);
 
@@ -209,20 +143,32 @@ public class ReaderEditPanel extends JPanel {
         add(streetAndBuildingTxt);
         add(passLbl);
         add(passField);
-        add(edit);
-        add(confirm);
         add(cancel);
     }
 
     private void setComponentsEditability(boolean editability) {
+        cardIdTxt.setEditable(editability);
+        cardIdTxt.setBorder(null);
         firstNameTxt.setEditable(editability);
+        firstNameTxt.setBorder(null);
         lastNameTxt.setEditable(editability);
+        lastNameTxt.setBorder(null);
         emailTxt.setEditable(editability);
+        emailTxt.setBorder(null);
         streetAndBuildingTxt.setEditable(editability);
+        streetAndBuildingTxt.setBorder(null);
         postalCodeTxt.setEditable(editability);
+        postalCodeTxt.setBorder(null);
+        cityNameTxt.setEditable(editability);
+        cityNameTxt.setBorder(null);
         passField.setEditable(editability);
+        passField.setBorder(null);
     }
 
     public JTextField getCardIdTxt(){return cardIdTxt;}
+
+    public MyButton getCancel(){
+        return cancel;
+    }
 
 }

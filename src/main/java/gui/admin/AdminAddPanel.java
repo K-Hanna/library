@@ -100,7 +100,7 @@ public class AdminAddPanel extends JPanel {
                 admin.setSalary(salaryTxt.getText());
                 adminDBService.addAdmin(admin);
 
-                JOptionPane.showMessageDialog(this, "Nowy administrator został dodany do bazy \n Numer karty: " + cardForNewUser.getIdCard());
+                JOptionPane.showMessageDialog(this, "Nowy administrator został dodany do bazy \nNumer karty: " + cardForNewUser.getIdCard());
                 setComponentsEditability(false);
                 cardIdTxt.setEditable(false);
             }
@@ -111,13 +111,13 @@ public class AdminAddPanel extends JPanel {
     private void createReturnBtn() {
         returnBtn = new MyButton(false);
         returnBtn.setText("Powrót");
-        returnBtn.setBounds(400, 300, 200, 30);
+        returnBtn.setBounds(400, 60, 200, 30);
     }
 
     private void createAddBtn() {
         addAdminBtn = new MyButton(true);
         addAdminBtn.setText("Wprowadź dane");
-        addAdminBtn.setBounds(400, 150, 200, 30);
+        addAdminBtn.setBounds(400, 20, 200, 30);
     }
 
     private void addAllLabels() {

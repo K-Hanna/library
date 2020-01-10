@@ -2,10 +2,6 @@ package gui;
 
 import config.Validation;
 import gui.admin.*;
-import gui.book.*;
-import gui.bookTransfer.*;
-import gui.event.*;
-import gui.general.BackgroundPanel;
 import gui.librarian.*;
 import gui.login.LoginPanel;
 import gui.reader.*;
@@ -21,16 +17,10 @@ import java.awt.event.KeyListener;
 public class MFrame extends JFrame {
 
     private ReaderAddPanel readerAddPanel;
-    private LibrarianAddPanel librarianAddPanel;
-    private LibrarianUpdatePanel librarianUpdatePanel;
-    private LibrarianDeletePanel librarianDeletePanel;
-    private AdminAddPanel adminAddPanel;
-    private AdminDeletePanel adminDeletePanel;
-    private AdminUpdatePanel adminUpdatePanel;
     private LoginPanel loginPanel;
-    private AdminEntryPanel adminEntryPanel;
     private LibrarianTabbedPanel librarianTabbedPanel;
     private ReaderTabbedPanel readerTabbedPanel;
+    private AdminTabbedPanel adminTabbedPanel;
 
     public MFrame() {
 
@@ -45,8 +35,6 @@ public class MFrame extends JFrame {
         int posX = width / 2 - getWidth() / 2;
         int posY = height / 2 - getHeight() / 2;
         setLocation(posX, posY);
-
-
 
 //----------------login panel----------------
 
@@ -90,7 +78,6 @@ public class MFrame extends JFrame {
                             readerTabbedPanel = new ReaderTabbedPanel(loginPanel);
                             readerTabbedPanel.getReaderLabel().setText
                                     ("Zalogowano jako: " + user.getFirstName() + " " + user.getLastName() + ", " + loginPanel.getCardNrTxt().getText());
-
                             add(readerTabbedPanel);
                             remove(loginPanel);
                             repaint();
@@ -124,115 +111,23 @@ public class MFrame extends JFrame {
 
                         } else if(Validation.checkIfAdmin(user)){
                             //---------------------ADMINISTRATOR---------------------------
-                            adminEntryPanel = new AdminEntryPanel();
-                            adminEntryPanel.setCardNrLbl(loginPanel.getCardNrTxt().getText());
-                            adminEntryPanel.setNameLbl(user.getFirstName() + " " + user.getLastName());
-                            add(adminEntryPanel);
-                            remove(loginPanel);
-                            repaint();
-                            revalidate();
-                            //dodawanie bibiliotekarza
-                            adminEntryPanel.getAddLibrarianBtn().addActionListener(e1 -> {
-                                librarianAddPanel = new LibrarianAddPanel();
-                                add(librarianAddPanel);
-                                remove(adminEntryPanel);
+                                adminTabbedPanel = new AdminTabbedPanel();
+                                adminTabbedPanel.getAdminLabel().setText
+                                        ("Zalogowano jako: " + user.getFirstName() + " " + user.getLastName() + ", " + loginPanel.getCardNrTxt().getText());
+
+                                add(adminTabbedPanel);
+                                remove(loginPanel);
                                 repaint();
                                 revalidate();
 
-                                librarianAddPanel.getReturnBtn().addActionListener(e2 -> {
-                                    add(adminEntryPanel);
-                                    remove(librarianAddPanel);
+                                adminTabbedPanel.getLogout().addActionListener(e1 -> {
+                                    add(loginPanel);
+                                    remove(adminTabbedPanel);
                                     repaint();
                                     revalidate();
                                 });
-                            });
-                            //usuwanie bibiliotekarza
-                            adminEntryPanel.getDeleteLibrarianBtn().addActionListener(e1 -> {
-                                librarianDeletePanel = new LibrarianDeletePanel();
-                                add(librarianDeletePanel);
-                                remove(adminEntryPanel);
-                                repaint();
-                                revalidate();
 
-                                librarianDeletePanel.getReturnBtn().addActionListener(e2 -> {
-                                    add(adminEntryPanel);
-                                    remove(librarianDeletePanel);
-                                    repaint();
-                                    revalidate();
-                                });
-                            });
-                            //update bibliotekarza
-                            adminEntryPanel.getUpdateLibrarianBtn().addActionListener(e1 -> {
-                                librarianUpdatePanel = new LibrarianUpdatePanel();
-                                add(librarianUpdatePanel);
-                                remove(adminEntryPanel);
-                                repaint();
-                                revalidate();
-
-                                librarianUpdatePanel.getReturnBtn().addActionListener(e2 -> {
-                                    add(adminEntryPanel);
-                                    remove(librarianUpdatePanel);
-                                    repaint();
-                                    revalidate();
-                                });
-                            });
-                            //dodawanie administratora
-                            adminEntryPanel.getAddAdminBtn().addActionListener(e1 -> {
-                                adminAddPanel = new AdminAddPanel();
-                                add(adminAddPanel);
-                                remove(adminEntryPanel);
-                                repaint();
-                                revalidate();
-
-                                adminAddPanel.getReturnBtn().addActionListener(e2 -> {
-                                    add(adminEntryPanel);
-                                    remove(adminAddPanel);
-                                    repaint();
-                                    revalidate();
-                                });
-                            });
-                            //usuwanie administratora
-                            adminEntryPanel.getDeleteAdminBtn().addActionListener(e1 -> {
-                                adminDeletePanel = new AdminDeletePanel();
-                                add(adminDeletePanel);
-                                remove(adminEntryPanel);
-                                repaint();
-                                revalidate();
-
-                                adminDeletePanel.getReturnBtn().addActionListener(e2 -> {
-                                    add(adminEntryPanel);
-                                    remove(adminDeletePanel);
-                                    repaint();
-                                    revalidate();
-                                });
-                            });
-                            //update administratora
-                            adminEntryPanel.getUpdateAdminBtn().addActionListener(e1 -> {
-                                adminUpdatePanel = new AdminUpdatePanel();
-                                add(adminUpdatePanel);
-                                remove(adminEntryPanel);
-                                repaint();
-                                revalidate();
-
-                                adminUpdatePanel.getReturnBtn().addActionListener(e2 -> {
-                                    add(adminEntryPanel);
-                                    remove(adminUpdatePanel);
-                                    repaint();
-                                    revalidate();
-                                });
-                            });
-
-                            adminEntryPanel.getReturnBtn().addActionListener(e1 -> {
-                                loginPanel.setCardNrTxt("");
-                                loginPanel.setPassTxt("");
-                                add(loginPanel);
-                                remove(adminEntryPanel);
-                                repaint();
-                                revalidate();
-                            });
-
-                        } else
-                        {
+                            }  else  {
                             JOptionPane.showMessageDialog(this, "Brak użytkownika w bazie");
                         }
                     } else {
@@ -245,9 +140,6 @@ public class MFrame extends JFrame {
                 JOptionPane.showMessageDialog(this, "Niepoprawny numer karty");
             }
         });
-        
-//
-
     }
 
 

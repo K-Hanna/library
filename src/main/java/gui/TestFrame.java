@@ -1,9 +1,6 @@
 package gui;
 
-import gui.book.BookEditPanel;
-import gui.book.BookGetPanel;
-import gui.general.BackgroundLabel;
-import gui.general.BackgroundPanel;
+import gui.admin.AdminTabbedPanel;
 import gui.librarian.LibrarianTabbedPanel;
 
 import javax.swing.*;
@@ -14,11 +11,14 @@ public class TestFrame extends JFrame {
 
         setSize(700,600);
 
-//        BackgroundPanel backgroundPanel = new BackgroundPanel();
-//        add(backgroundPanel);
+//        AdminEntryPanel adminEntryPanel = new AdminEntryPanel();
+//        add(adminEntryPanel);
 
-        LibrarianTabbedPanel librarianTabbedPanel = new LibrarianTabbedPanel();
-        add(librarianTabbedPanel);
+        AdminTabbedPanel adminTabbedPanel = new AdminTabbedPanel();
+        add(adminTabbedPanel);
+
+//        LibrarianTabbedPanel librarianTabbedPanel = new LibrarianTabbedPanel();
+//        add(librarianTabbedPanel);
 
     }
 }

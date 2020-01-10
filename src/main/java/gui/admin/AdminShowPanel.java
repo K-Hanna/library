@@ -8,87 +8,169 @@ import card.ICardDBService;
 import city.CityDBServiceImpl;
 import city.ICityDBService;
 import config.Validation;
+import gui.general.MyButton;
 import images.IPosterDBService;
 import images.Poster;
 import images.PosterDBServiceImpl;
 import librarian.ILibrarianDBService;
+import librarian.Librarian;
 import librarian.LibrarianDBServiceImpl;
 import user.IUserDBService;
+import user.User;
 import user.UserDBServiceImpl;
 
 import javax.swing.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 public class AdminShowPanel extends JPanel {
 
     private JLabel firstNameLbl, lastNamelbl, emailLbl, passLbl, cardIdLbl, postalCodeLbl, cityNameLbl, streetAndBuildingLbl;
     private JLabel salaryLbl, isFullTimeLbl;
-    private JTextField firstNameTxt, lastNameTxt, emailTxt, passTxt, cardIdTxt, postalCodeTxt, cityNameTxt, streetAndBuildingTxt;
+    private JTextField firstNameTxt, lastNameTxt, emailTxt, cardIdTxt, postalCodeTxt, cityNameTxt, streetAndBuildingTxt;
     private JTextField salaryTxt;
+    private JPasswordField passTxt;
     private JCheckBox isFullTimeChbx;
-    private JButton searchAdminBtn, returnBtn;
-    private int fieldLength = 200;
-    private JLabel imageLbl;
+    private JButton edit, confirm, cancel;
+    private int fieldLength = 200, adminCard;
 
     private ICityDBService cityDBService = new CityDBServiceImpl();
     private IAdminDBService adminDBService = new AdminDBServiceImpl();
+    private IUserDBService userDBService = new UserDBServiceImpl();
 
-    public AdminShowPanel(){
+    private Admin admin;
+
+    public AdminShowPanel(AdminGetPanel adminGetPanel){
+
+        this.adminCard = adminGetPanel.getAdminCard();
+        admin = adminDBService.readAdminFromDB(adminCard);
+
         setLayout(null);
-        createAllLabels();
-        addAllLabels();
-        setCompVisibility(false);
-        createSearchBtn();
-        add(searchAdminBtn);
-        actionSearchAdminBtn();
-        createReturnBtn();
-        add(returnBtn);
-        setComponentsEditability(false);
-    }
-//do przerobienia
-    private void actionSearchAdminBtn(){
-        searchAdminBtn.addActionListener(e -> {
-            if (Validation.checkIfInteger(cardIdTxt.getText())) {
-                //setComponentsEditability(false);
-                int cardId = Integer.parseInt(cardIdTxt.getText());
-                System.out.println(cardId);
-                Admin admin = adminDBService.readAdminFromDB(cardId);
-                System.out.println(admin);
-                if (admin.getIdAdmin() != 0) {
-                    setCompVisibility(true);
-                    firstNameTxt.setText(admin.getFirstName());
-                    lastNameTxt.setText(admin.getLastName());
-                    emailTxt.setText(admin.getEmail());
-                    postalCodeTxt.setText(admin.getPostalCode());
-                    cityNameTxt.setText(cityDBService.getCityName(admin.getPostalCode()));
-                    streetAndBuildingTxt.setText(admin.getStreetBuilding());
-                    salaryTxt.setText(admin.getSalary());
-                    isFullTimeChbx.setSelected(admin.isFullTime());
-                } else {
-                    cardIdTxt.setText("");
-                    setCompVisibility(false);
-                    JOptionPane.showMessageDialog(this, "Brak karty o tym numerze w systemie");
-                }
-            } else{
-                JOptionPane.showMessageDialog(this, "Wpisz poprawny numer karty");
-                cardIdTxt.setText("");
 
-            }
+        createButtons();
+        createFields();
+        addComps();
+        setComponentsEditability(false);
+        setPostalCodeKL();
+        action();
+
+    }
+
+    private void setPostalCodeKL() {
+        postalCodeTxt.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {}
+            @Override
+            public void keyPressed(KeyEvent e) {}
+            @Override
+            public void keyReleased(KeyEvent e) {cityNameTxt.setText(cityDBService.getCityName(postalCodeTxt.getText())); }
         });
     }
 
-    private void createSearchBtn(){
-        searchAdminBtn = new JButton();
-        searchAdminBtn.setText("Wyszukaj");
-        searchAdminBtn.setBounds(400,20,200,50);
+    private void createButtons(){
+
+        confirm = new MyButton(true);
+        confirm.setText("Aktualizuj dane");
+        confirm.setVisible(false);
+        confirm.setBounds(400, 20, 200, 30);
+
+        cancel = new MyButton(false);
+        cancel.setText("Powrót");
+        cancel.setBounds(400, 60, 200, 30);
+
+        edit = new MyButton(true);
+        edit.setText("Zmień dane");
+        edit.setBounds(400,20,200,30);
     }
 
-    private void createReturnBtn(){
-        returnBtn = new JButton();
-        returnBtn.setText("Powrót");
-        returnBtn.setBounds(400,300,200,50);
+    private void createFields(){
+
+        cardIdLbl = new JLabel();
+        cardIdLbl.setText("Numer karty");
+        cardIdLbl.setBounds(50, 20, 100, 30);
+
+        cardIdTxt = new JTextField();
+        cardIdTxt.setBounds(150, 20, fieldLength, 30);
+        cardIdTxt.setEditable(false);
+        cardIdTxt.setText(String.valueOf(admin.getCardNumber()));
+
+        firstNameLbl = new JLabel();
+        firstNameLbl.setText("Imię");
+        firstNameLbl.setBounds(50, 60, 100, 30);
+
+        firstNameTxt = new JTextField();
+        firstNameTxt.setBounds(150, 60, fieldLength, 30);
+        firstNameTxt.setText(admin.getFirstName());
+
+        lastNamelbl = new JLabel();
+        lastNamelbl.setText("Nazwisko");
+        lastNamelbl.setBounds(50, 100, 100, 30);
+
+        lastNameTxt = new JTextField();
+        lastNameTxt.setBounds(150, 100, fieldLength, 30);
+        lastNameTxt.setText(admin.getLastName());
+
+        emailLbl = new JLabel();
+        emailLbl.setText("Email");
+        emailLbl.setBounds(50, 140, 100, 30);
+
+        emailTxt = new JTextField();
+        emailTxt.setBounds(150, 140, fieldLength, 30);
+        emailTxt.setText(admin.getEmail());
+
+        streetAndBuildingLbl = new JLabel();
+        streetAndBuildingLbl.setText("Ulica/nr");
+        streetAndBuildingLbl.setBounds(50, 180, 100, 30);
+
+        streetAndBuildingTxt = new JTextField();
+        streetAndBuildingTxt.setBounds(150, 180, fieldLength, 30);
+        streetAndBuildingTxt.setText(admin.getStreetBuilding());
+
+        postalCodeLbl = new JLabel();
+        postalCodeLbl.setText("Kod pocztowy");
+        postalCodeLbl.setBounds(50, 220, 100, 30);
+
+        postalCodeTxt = new JTextField();
+        postalCodeTxt.setBounds(150, 220, fieldLength, 30);
+        postalCodeTxt.setText(admin.getPostalCode());
+
+        cityNameLbl = new JLabel();
+        cityNameLbl.setText("Miasto");
+        cityNameLbl.setBounds(50, 260, 100, 30);
+
+        cityNameTxt = new JTextField();
+        cityNameTxt.setBounds(150, 260, fieldLength, 30);
+        cityNameTxt.setText(cityDBService.getCityName(postalCodeTxt.getText()));
+        cityNameTxt.setEditable(false);
+
+        passLbl = new JLabel();
+        passLbl.setText("Hasło");
+        passLbl.setBounds(50, 300, 100, 30);
+
+        passTxt = new JPasswordField();
+        passTxt.setText(admin.getPassword());
+        passTxt.setBounds(150, 300, fieldLength, 30);
+
+        salaryLbl = new JLabel();
+        salaryLbl.setText("Pensja");
+        salaryLbl.setBounds(50, 340, 100, 30);
+
+        salaryTxt = new JTextField();
+        salaryTxt.setBounds(150, 340, fieldLength, 30);
+        salaryTxt.setText(admin.getSalary());
+
+        isFullTimeLbl = new JLabel();
+        isFullTimeLbl.setText("Pełny etat");
+        isFullTimeLbl.setBounds(50, 380, 100, 30);
+
+        isFullTimeChbx = new JCheckBox();
+        isFullTimeChbx.setEnabled(false);
+        isFullTimeChbx.setBounds(150, 380, 30, 30);
+        isFullTimeChbx.setSelected(admin.isFullTime());
+
     }
 
-    private void addAllLabels(){
+    private void addComps() {
         add(cardIdLbl);
         add(cardIdTxt);
         add(firstNameLbl);
@@ -103,162 +185,68 @@ public class AdminShowPanel extends JPanel {
         add(cityNameTxt);
         add(streetAndBuildingLbl);
         add(streetAndBuildingTxt);
+        add(passLbl);
+        add(passTxt);
         add(salaryLbl);
         add(salaryTxt);
         add(isFullTimeLbl);
         add(isFullTimeChbx);
+        add(edit);
+        add(confirm);
+        add(cancel);
     }
 
-    private void createAllLabels(){
-        createCardidLbl();
-        createCardIdTxt();
-        createFirstnameLbl();
-        createFirstNameTxt();
-        createLastnameLbl();
-        createLastNameTxt();
-        createEmailLbl();
-        createEmailTxt();
-        createPostalCodeLbl();
-        createPostalCodeTxt();
-        createCityNameLbl();
-        createCityNameTxt();
-        createStreetAndBuildingLbl();
-        createStreetAndBuildingTxt();
-        createIsFullTimeLbl();
-        createIsFullTimeChbx();
-        createSalaryLbl();
-        createSalaryTxt();
-    }
+    private void action() {
 
-    private void createIsFullTimeLbl(){
-        isFullTimeLbl = new JLabel();
-        isFullTimeLbl.setText("Pełny etat");
-        isFullTimeLbl.setBounds(20, 340, 100, 30);
-    }
+        edit.addActionListener(e -> {
+            setComponentsEditability(true);
+            confirm.setVisible(true);
+            edit.setVisible(false);
+            cancel.setText("Anuluj");
+        });
 
-    private void createIsFullTimeChbx(){
-        isFullTimeChbx = new JCheckBox();
-        isFullTimeChbx.setEnabled(false);
-        isFullTimeChbx.setBounds(150, 340, 30, 30);
-    }
+        cancel.addActionListener(e ->{
+            setComponentsEditability(false);
+            confirm.setVisible(false);
+            edit.setVisible(true);
+        });
 
-    private void createSalaryLbl(){
-        salaryLbl = new JLabel();
-        salaryLbl.setText("Pensja");
-        salaryLbl.setBounds(20, 300, 100, 30);
-    }
+        confirm.addActionListener(e -> {
+            if(Validation.checkIfEmailOK(emailTxt.getText()) == false)
+                JOptionPane.showMessageDialog(this, "Niepoprawny email");
+            else if(Validation.checkIfPostalCodeOK(cityNameTxt.getText())==false)
+                JOptionPane.showMessageDialog(this, "Niepoprawny kod pocztowy");
+            else if(Validation.checkIfInteger(cardIdTxt.getText()) == false)
+                JOptionPane.showMessageDialog(this, "Niepoprawny numer karty użytkownika");
+            else if(firstNameTxt.getText().equals("") || lastNameTxt.getText().equals("")|| emailTxt.getText().equals("")||postalCodeTxt.getText().equals("")||streetAndBuildingTxt.getText().equals(""))
+                JOptionPane.showMessageDialog(this, "Proszę wypełnić wszystkie pola");
+            else {
+                int cardId = Integer.parseInt(cardIdTxt.getText());
+                User user = userDBService.readUserFromDB(cardId);
+                int userId = user.getIdUser();
+                String userFirstName = firstNameTxt.getText();
+                String userLastName = lastNameTxt.getText();
+                String userEmail = emailTxt.getText();
+                String userSteetBuilding = streetAndBuildingTxt.getText();
+                String userPostalCode = postalCodeTxt.getText();
+                StringBuilder pass = new StringBuilder();
+                for (char c : passTxt.getPassword())
+                    pass.append(c);
+                String userPass;
+                if (pass.toString().equals("------"))
+                    userPass = user.getPassword();
+                else
+                    userPass = pass.toString();
 
-    private void createSalaryTxt() {
-        salaryTxt = new JTextField();
-        salaryTxt.setBounds(150, 300, fieldLength, 30);
-    }
-
-
-    private void createImgLabel(){
-        imageLbl = new JLabel();
-        IPosterDBService posterDBService = new PosterDBServiceImpl();
-        Poster poster = posterDBService.readImage("poster2.png");
-        ImageIcon icon = new ImageIcon(poster.getImgBytes());
-        imageLbl.setIcon(icon);
-        imageLbl.setBounds(200,150,200,200);
-    }
-
-    private void createStreetAndBuildingLbl(){
-        streetAndBuildingLbl = new JLabel();
-        streetAndBuildingLbl.setText("Ulica/nr");
-        streetAndBuildingLbl.setBounds(20,260,100,30);
-    }
-
-    private void createStreetAndBuildingTxt(){
-        streetAndBuildingTxt = new JTextField();
-        streetAndBuildingTxt.setBounds(150,260,fieldLength,30);
-    }
-
-    private void createCityNameLbl(){
-        cityNameLbl = new JLabel();
-        cityNameLbl.setText("Miasto");
-        cityNameLbl.setBounds(20,220,100,30);
-    }
-
-    private void createCityNameTxt(){
-        cityNameTxt = new JTextField();
-        cityNameTxt.setBounds(150,220,fieldLength,30);
-        cityNameTxt.setEditable(false);
-    }
-
-    private void createPostalCodeLbl(){
-        postalCodeLbl = new JLabel();
-        postalCodeLbl.setText("Kod pocztowy");
-        postalCodeLbl.setBounds(20,180,100,30);
-    }
-
-    private void createPostalCodeTxt(){
-        postalCodeTxt = new JTextField();
-        postalCodeTxt.setBounds(150,180,fieldLength,30);
-    }
-    private void createEmailLbl(){
-        emailLbl = new JLabel();
-        emailLbl.setText("Email");
-        emailLbl.setBounds(20,140,100,30);
-    }
-
-    private void createEmailTxt(){
-        emailTxt = new JTextField();
-        emailTxt.setBounds(150,140,fieldLength,30);
-    }
-
-    private void createLastnameLbl(){
-        lastNamelbl = new JLabel();
-        lastNamelbl.setText("Nazwisko");
-        lastNamelbl.setBounds(20,100,100,30);
-    }
-
-    private void createLastNameTxt(){
-        lastNameTxt = new JTextField();
-        lastNameTxt.setBounds(150,100,fieldLength,30);
-    }
-
-    private void createFirstnameLbl(){
-        firstNameLbl = new JLabel();
-        firstNameLbl.setText("Imię");
-        firstNameLbl.setBounds(20,60,100,30);
-    }
-
-    private void createFirstNameTxt(){
-        firstNameTxt = new JTextField();
-        firstNameTxt.setBounds(150,60,fieldLength,30);
-    }
-
-    private void createCardidLbl(){
-        cardIdLbl = new JLabel();
-        cardIdLbl.setText("Numer karty");
-        cardIdLbl.setBounds(20,20,100,30);
-    }
-
-    private void createCardIdTxt(){
-        cardIdTxt = new JTextField();
-        cardIdTxt.setBounds(150,20,fieldLength,30);
-    }
-
-    private void setCompVisibility(boolean visibility){
-        firstNameLbl.setVisible(visibility);
-        lastNamelbl.setVisible(visibility);
-        emailLbl.setVisible(visibility);
-        postalCodeLbl.setVisible(visibility);
-        cityNameLbl.setVisible(visibility);
-        streetAndBuildingLbl.setVisible(visibility);
-        salaryLbl.setVisible(visibility);
-        isFullTimeLbl.setVisible(visibility);
-        firstNameTxt.setVisible(visibility);
-        lastNameTxt.setVisible(visibility);
-        emailTxt.setVisible(visibility);
-        //passTxt.setVisible(visibility);
-        //cardIdTxt.setVisible(visibility);
-        postalCodeTxt.setVisible(visibility);
-        cityNameTxt.setVisible(visibility);
-        streetAndBuildingTxt.setVisible(visibility);
-        salaryTxt.setVisible(visibility);
-        isFullTimeChbx.setVisible(visibility);
+                userDBService.updateUserInDB(userId, userFirstName, userLastName, userEmail, userPass, userSteetBuilding, userPostalCode, cardId);
+                adminDBService.updateAdminInDB(admin.getUserId(), salaryTxt.getText(), isFullTimeChbx.isSelected());
+                setComponentsEditability(false);
+                confirm.setVisible(false);
+                cancel.setText("Powrót");
+                edit.setVisible(true);
+                JOptionPane.showMessageDialog(this, "Dane użytkownika zaktualizowane poprawnie");
+            }
+        });
     }
 
     private void setComponentsEditability(boolean editability){
@@ -266,8 +254,8 @@ public class AdminShowPanel extends JPanel {
         firstNameTxt.setEditable(editability);
         lastNameTxt.setEditable(editability);
         emailTxt.setEditable(editability);
-        // passTxt.setEnabled(editability);
-        //cardIdTxt.setEnabled(editability);
+        passTxt.setEnabled(editability);
+        cardIdTxt.setEnabled(editability);
         postalCodeTxt.setEditable(editability);
         cityNameTxt.setEditable(editability);
         streetAndBuildingTxt.setEditable(editability);
@@ -275,7 +263,9 @@ public class AdminShowPanel extends JPanel {
         isFullTimeChbx.setEnabled(editability);
     }
 
-    public JButton getReturnBtn(){
-        return returnBtn;
+    public JButton getCancel(){
+        return cancel;
     }
+
+    public JTextField getCardIdTxt(){return cardIdTxt;}
 }

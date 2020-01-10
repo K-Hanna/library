@@ -1,12 +1,10 @@
 package gui.login;
 
 import gui.general.BackgroundLabel;
-import gui.general.BackgroundPanel;
 import gui.general.MyButton;
 import gui.general.MyLabel;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.Objects;
 
 public class LoginPanel extends JPanel {

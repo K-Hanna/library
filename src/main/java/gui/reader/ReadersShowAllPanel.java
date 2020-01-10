@@ -1,9 +1,5 @@
 package gui.reader;
 
-import card.CardDBServiceImpl;
-import card.ICardDBService;
-import city.CityDBServiceImpl;
-import city.ICityDBService;
 import gui.general.MyButton;
 import reader.IReaderDBService;
 import reader.ReaderDBServiceImpl;
@@ -23,7 +19,7 @@ public class ReadersShowAllPanel extends JPanel {
     private JLabel keyWordLabel, result;
     private JTextField keyWord;
     private JList resultList;
-    private MyButton search, remove, showBooks;
+    private MyButton search, remove, showBooks, showReader;
     private JScrollPane scrollPane;
 
     private IReaderDBService readerDBService = new ReaderDBServiceImpl();
@@ -81,9 +77,13 @@ public class ReadersShowAllPanel extends JPanel {
         remove.setText("Usuń");
         remove.setBounds(400,60,200,30);
 
+        showReader = new MyButton(true);
+        showReader.setText("Pokaż dane czytelnika");
+        showReader.setBounds(400,100,200,30);
+
         showBooks = new MyButton(true);
         showBooks.setText("Pokaż książki czytelnika");
-        showBooks.setBounds(400,100,200,30);
+        showBooks.setBounds(400,140,200,30);
 
     }
 
@@ -116,6 +116,7 @@ public class ReadersShowAllPanel extends JPanel {
 
         remove.addActionListener(e ->{
             User user = (User) resultList.getSelectedValue();
+            int userCard = user.getCardNumber();
 
             if(user == null) {
                 JOptionPane.showMessageDialog(this, "Żaden czytelnik nie został wybrany.");
@@ -124,9 +125,11 @@ public class ReadersShowAllPanel extends JPanel {
                 if (JOptionPane.showConfirmDialog(this, "Czy na pewno usunąć czytelnika?", "UWAGA!",
                         JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                     readerDBService.deleteReaderFromDB(user.getIdUser());
-                    userDBService.deleteUserFromDB(user.getCardNumber());
-                    repaint();
-                    revalidate();
+                    userDBService.deleteUserFromDB(userCard);
+
+                    List<User> readers = readerDBService.readReadersFromDB();
+                    createReaderList(readers);
+
                 }
             }
         });
@@ -139,6 +142,7 @@ public class ReadersShowAllPanel extends JPanel {
         add(result);
         add(search);
         add(remove);
+        add(showReader);
         add(showBooks);
     }
 
@@ -146,16 +150,20 @@ public class ReadersShowAllPanel extends JPanel {
         return showBooks;
     }
 
-    public int getReadersBooks(){
+    public MyButton getShowReader(){
+        return showReader;
+    }
 
-        int readersID = 0;
+    public int getReadersCard(){
+
+        int readersCard = 0;
 
         User user = (User) resultList.getSelectedValue();
         if(user != null) {
-            readersID = user.getCardNumber();
+            readersCard = user.getCardNumber();
         }
 
-        return readersID;
+        return readersCard;
     }
 
     private boolean check(){

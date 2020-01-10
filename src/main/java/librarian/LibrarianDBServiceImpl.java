@@ -43,23 +43,22 @@ public class LibrarianDBServiceImpl implements ILibrarianDBService {
     @Override
     public void deleteLibrarianFromDB(int idUser) {
 
+        String SQL = "delete from librarian where userid = ?;";
         Connection connection = initializeDataBaseConnection();
         PreparedStatement preparedStatement = null;
+
         try {
-            String queryDeleteLibrarian = "DELETE FROM librarian WHERE userid = ? ";
-            preparedStatement = connection.prepareStatement(queryDeleteLibrarian);
-            preparedStatement.setInt(1,idUser);
-            preparedStatement.execute();
-            System.out.println("Librarian was deleted");
-        }
-        catch (SQLException e){
+            preparedStatement = connection.prepareStatement(SQL);
+            preparedStatement.setInt(1, idUser);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
             System.err.println("Error during invoke SQL query: \n" + e.getMessage());
             throw  new RuntimeException("Error during invoke SQL query");
         }
         finally {
             closeDBResources(connection,preparedStatement);
         }
-
     }
 
     @Override
