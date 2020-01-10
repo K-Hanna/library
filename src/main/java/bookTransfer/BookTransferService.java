@@ -121,7 +121,7 @@ public class BookTransferService implements IBookTransfer {
     public void reserveBook(int userId, int bookId) {
 
         SQL = "INSERT INTO reservation (book_id, reader_id, datecreate, duedate) " +
-                "VALUES ((SELECT book_id FROM author_book WHERE book_id = ?), ?, ?, ?);";
+                "VALUES ((SELECT book_id FROM author_book WHERE book_id = ? limit 1), ?, ?, ?);";
 
         Connection connection = initializeDataBaseConnection();
         PreparedStatement preparedStatement = null;
