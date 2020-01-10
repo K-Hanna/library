@@ -8,10 +8,10 @@ public class MyButton extends JButton {
     public MyButton(boolean option){
 
         if(option){
-            setBackground(Color.blue);
+            setBackground(new Color(89,53,37));
             setForeground(Color.white);
         } else {
-            setForeground(Color.blue);
+            setForeground(new Color(89,53,37);
             setBorder(null);
             setContentAreaFilled(false);
         }
