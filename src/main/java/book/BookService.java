@@ -238,12 +238,18 @@ public class BookService implements IBook {
         Connection connection = initializeDataBaseConnection();
         PreparedStatement preparedStatement = null;
 
-        SQL = "update book set bookshelf_id = ? where book.book_id = ?";
-
         try {
-            preparedStatement = connection.prepareStatement(SQL);
-            preparedStatement.setInt(1, bookshelfId);
-            preparedStatement.setInt(2, id);
+
+            if(bookshelfId > 0) {
+                SQL = "update book set bookshelf_id = ? where book.book_id = ?;";
+                preparedStatement = connection.prepareStatement(SQL);
+                preparedStatement.setInt(1, bookshelfId);
+                preparedStatement.setInt(2, id);
+            } else {
+                SQL = "update book set bookshelf_id = null where book.book_id = ?;";
+                preparedStatement = connection.prepareStatement(SQL);
+                preparedStatement.setInt(1, id);
+            }
 
             preparedStatement.executeUpdate();
             message = "Lokalizacja książki zmieniona na: alejka:" + alley + ", regał: " + bookstand + ", półka: " + shelf + ".";

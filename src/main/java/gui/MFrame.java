@@ -90,7 +90,6 @@ public class MFrame extends JFrame {
                             readerTabbedPanel = new ReaderTabbedPanel(loginPanel);
                             readerTabbedPanel.getReaderLabel().setText
                                     ("Zalogowano jako: " + user.getFirstName() + " " + user.getLastName() + ", " + loginPanel.getCardNrTxt().getText());
-//                            readerTabbedPanel.getUserId().setText(String.valueOf(user.getIdUser()));
 
                             add(readerTabbedPanel);
                             remove(loginPanel);
@@ -103,117 +102,6 @@ public class MFrame extends JFrame {
                                 repaint();
                                 revalidate();
                             });
-
-
-/*                            readerEntryPanel = new ReaderEntryPanel();
-                            readerEntryPanel.setCardNrLbl(loginPanel.getCardNrTxt().getText());
-                            readerEntryPanel.setNameLbl(user.getFirstName() + " " + user.getLastName());
-                            add(readerEntryPanel);
-                            remove(loginPanel);
-                            repaint();
-                            revalidate();*/
-
-                            /*readerEntryPanel.getJoinEventBtn().addActionListener(e1 -> {
-                                eventSignInPanel = new EventSignInPanel();
-                                eventSignInPanel.getCardIdTxt().setText(readerEntryPanel.getCardNrLbl().getText());
-                                add(eventSignInPanel);
-                                remove(readerEntryPanel);
-                                repaint();
-                                revalidate();
-
-                                eventSignInPanel.getReturnBtn().addActionListener(e2 -> {
-                                    add(readerEntryPanel);
-                                    remove(eventSignInPanel);
-                                    repaint();
-                                    revalidate();
-                                });
-                            });
-
-                            readerEntryPanel.getLendingsBtn().addActionListener(e1 -> {
-                                bookShowPanel = new BookShowPanel(readerEntryPanel);
-                                bookShowPanel.getCardIdTxt().setText(readerEntryPanel.getCardNrLbl().getText());
-                                add(bookShowPanel);
-                                remove(readerEntryPanel);
-                                repaint();
-                                revalidate();
-
-                                bookShowPanel.getReturnBtn().addActionListener(e2 -> {
-                                    add(readerEntryPanel);
-                                    remove(bookShowPanel);
-                                    repaint();
-                                    revalidate();
-                                });
-                            });
-
-                            readerEntryPanel.getCheckEventBtn().addActionListener(e1 -> {
-                                eventSeeAllPanel = new EventSeeAllPanel(readerEntryPanel);
-                                eventSeeAllPanel.getCardIdTxt().setText(readerEntryPanel.getCardNrLbl().getText());
-                                add(eventSeeAllPanel);
-                                remove(readerEntryPanel);
-                                repaint();
-                                revalidate();
-
-                                eventSeeAllPanel.getReturnBtn().addActionListener(e2 -> {
-                                    add(readerEntryPanel);
-                                    remove(eventSeeAllPanel);
-                                    repaint();
-                                    revalidate();
-                                });
-                            });
-
-                            //operacje dotyczące reader entry panel
-                            readerEntryPanel.getUpdateBtn().addActionListener(e2 -> {
-                                readerUpdatePanel = new ReaderUpdatePanel();
-                                readerUpdatePanel.getCardIdTxt().setText(readerEntryPanel.getCardNrLbl().getText());
-                                readerUpdatePanel.getSearchReaderBtn().doClick();
-                                add(readerUpdatePanel);
-                                remove(readerEntryPanel);
-                                repaint();
-                                revalidate();
-
-                                readerUpdatePanel.getReturnBtn().addActionListener(e3 -> {
-                                    add(readerEntryPanel);
-                                    remove(readerUpdatePanel);
-                                    repaint();
-                                    revalidate();
-                                });
-
-                            });
-
-                            *//*readerEntryPanel.getLendingsBtn().addActionListener(e1 -> {
-                                reservationShowPanel = new ReservationShowPanel();
-                                reservationShowPanel.getCardIdLbl().se
-                            });*//*
-
-                            readerEntryPanel.getDoBookingBtn().addActionListener(e1 -> {
-                                bookReservePanel = new BookReservePanel();
-                                bookReservePanel.getCardIdTxt().setText(readerEntryPanel.getCardNrLbl().getText());
-                                add(bookReservePanel);
-                                remove(readerEntryPanel);
-                                repaint();
-                                revalidate();
-
-                                bookReservePanel.getReturnBtn().addActionListener(e2 -> {
-                                    add(readerEntryPanel);
-                                    remove(bookReservePanel);
-                                    repaint();
-                                    revalidate();
-                                });
-                            });
-
-                            //tutaj trzeba dodać doBooking (zrób rezerwację), oraz lendings (podejrzyj wypożyczenia)
-                            //ja dodam eventy dzisiaj
-
-
-                            readerEntryPanel.getReturnBtn().addActionListener(e1 -> {
-                                loginPanel.setCardNrTxt("");
-                                loginPanel.setPassTxt("");
-                                add(loginPanel);
-                                remove(readerEntryPanel);
-                                repaint();
-                                revalidate();
-                            });*/
-
 
                         } else if (Validation.checkIfLibrarian(user))
                         //---------------------BIBILOTEKARZ---------------------------

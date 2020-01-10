@@ -34,7 +34,7 @@ public class BookEditPanel extends JPanel {
         if(book == null)
             book = bookService.getNullBook(bookIdToEdit);
         author = authorService.getAuthor(authorIdToEdit);
-        
+
         setLayout(null);
 
         createComps();

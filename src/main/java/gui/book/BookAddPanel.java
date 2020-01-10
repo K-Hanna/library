@@ -16,7 +16,7 @@ public class BookAddPanel extends JPanel {
     private JTextField[] names;
     private JLabel alleyLabel, bookstandLabel, shelfLabel;
     private JComboBox alley, bookstand, shelf;
-    private MyButton confirm, cancel;
+    private MyButton confirm, cancel, clear;
     private JRadioButton oneAuthor, moreAuthors;
     private String alertMessage;
 
@@ -124,7 +124,11 @@ public class BookAddPanel extends JPanel {
 
         confirm = new MyButton(true);
         confirm.setText("Dodaj");
-        confirm.setBounds(400, 245, 200, 30);
+        confirm.setBounds(400, 205, 200, 30);
+
+        clear = new MyButton(true);
+        clear.setText("Wyczyść");
+        clear.setBounds(400,245,200,30);
 
         cancel = new MyButton(false);
         cancel.setText("Anuluj");
@@ -154,6 +158,7 @@ public class BookAddPanel extends JPanel {
         add(moreAuthors);
         add(moreAuthorsLabel);
         add(confirm);
+        add(clear);
         add(cancel);
         for (JTextField name : names) {
             add(name);
@@ -204,6 +209,10 @@ public class BookAddPanel extends JPanel {
             setMoreSeen(true);
             setOneSeen(false);
         });
+
+        clear.addActionListener(e ->{
+            clearFields();
+        });
     }
 
     private boolean check(){
@@ -232,6 +241,21 @@ public class BookAddPanel extends JPanel {
 
         return titleCheck && firstNameCheck && lastNameCheck && publisherCheck &&
                 genreCheck && languageCheck;
+    }
+
+    private void clearFields(){
+        title.setText("");
+        firstName.setText("");
+        lastName.setText("");
+        genre.setText("");
+        language.setText("");
+        publisher.setText("");
+        for (int i = 0; i < names.length; i++) {
+            names[i].setText("");
+        }
+        alley.setSelectedIndex(0);
+        bookstand.setSelectedIndex(0);
+        shelf.setSelectedIndex(0);
     }
 
     private void setMoreSeen(boolean seen){
