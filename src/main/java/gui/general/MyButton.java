@@ -11,7 +11,7 @@ public class MyButton extends JButton {
             setBackground(new Color(89,53,37));
             setForeground(Color.white);
         } else {
-            setForeground(new Color(89,53,37);
+            setForeground(new Color(89,53,37));
             setBorder(null);
             setContentAreaFilled(false);
         }
