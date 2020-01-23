@@ -7,6 +7,7 @@ import gui.bookTransfer.BookTransferPanel;
 import gui.event.*;
 import gui.general.BackgroundLabel;
 import gui.general.MyButton;
+import gui.libraryinf.LibraryDataShowPanel;
 import gui.login.LoginPanel;
 
 import javax.swing.*;
@@ -16,6 +17,7 @@ public class ReaderTabbedPanel extends JPanel {
     private ReaderEditPanel readerEditPanel;
     private BookShowPanel bookShowPanel;
     private EventShowPanel eventShowPanel;
+    private LibraryDataShowPanel libraryDataShowPanel;
     private JTabbedPane tabbedPane;
     private int idUser;
 
@@ -41,16 +43,16 @@ public class ReaderTabbedPanel extends JPanel {
 
         tabbedPane = new JTabbedPane();
         tabbedPane.setBounds(20,20,640,500);
-        setBorder(BorderFactory.createDashedBorder(null));
-        setOpaque(false);
 
         readerEditPanel = new ReaderEditPanel(this);
         bookShowPanel = new BookShowPanel(this);
         eventShowPanel = new EventShowPanel(this);
+        libraryDataShowPanel = new LibraryDataShowPanel();
 
         tabbedPane.insertTab(start + "Profil" + finish, null, readerEditPanel, null, 0);
         tabbedPane.insertTab(start + "Książki" + finish, null, bookShowPanel, null, 1);
         tabbedPane.insertTab(start + "Wydarzenia" + finish, null, eventShowPanel, null, 2);
+        tabbedPane.insertTab(start + "O bibliotece" + finish, null, libraryDataShowPanel, null, 3);
 
         add(tabbedPane);
     }

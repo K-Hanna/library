@@ -80,6 +80,7 @@ public class UserDBServiceImpl implements IUserDBService {
                 user.setIdUser(resultSet.getInt("iduser"));
                 user.setPostalCode(resultSet.getString("postalcode"));
                 user.setStreetBuilding(resultSet.getString("streetbuilding"));
+                user.setPhoto(resultSet.getInt("photo"));
                 users.add(user);
             }
             return users;
@@ -114,6 +115,7 @@ public class UserDBServiceImpl implements IUserDBService {
                 user.setIdUser(resultSet.getInt("iduser"));
                 user.setPostalCode(resultSet.getString("postalcode"));
                 user.setStreetBuilding(resultSet.getString("streetbuilding"));
+                user.setPhoto(resultSet.getInt("photo"));
             }
             return user;
 
@@ -149,6 +151,7 @@ public class UserDBServiceImpl implements IUserDBService {
                 user.setIdUser(resultSet.getInt("iduser"));
                 user.setPostalCode(resultSet.getString("postalcode"));
                 user.setStreetBuilding(resultSet.getString("streetbuilding"));
+                user.setPhoto(resultSet.getInt("photo"));
                 users.add(user);
             }
             return users;
@@ -185,6 +188,7 @@ public class UserDBServiceImpl implements IUserDBService {
                 user.setIdUser(resultSet.getInt("iduser"));
                 user.setPostalCode(resultSet.getString("postalcode"));
                 user.setStreetBuilding(resultSet.getString("streetbuilding"));
+                user.setPhoto(resultSet.getInt("photo"));
                 users.add(user);
             }
             return users;
@@ -218,6 +222,7 @@ public class UserDBServiceImpl implements IUserDBService {
                 user.setIdUser(resultSet.getInt("iduser"));
                 user.setPostalCode(resultSet.getString("postalcode"));
                 user.setStreetBuilding(resultSet.getString("streetbuilding"));
+                user.setPhoto(resultSet.getInt("photo"));
             }
             return user;
 
@@ -251,6 +256,7 @@ public class UserDBServiceImpl implements IUserDBService {
                 user.setIdUser(resultSet.getInt("iduser"));
                 user.setPostalCode(resultSet.getString("postalcode"));
                 user.setStreetBuilding(resultSet.getString("streetbuilding"));
+                user.setPhoto(resultSet.getInt("photo"));
 
                 userList.add(user);
             }
@@ -307,6 +313,28 @@ public class UserDBServiceImpl implements IUserDBService {
             return lastUserId;
         }
         catch (SQLException e){
+            System.err.println("Error during invoke SQL query: \n" + e.getMessage());
+            throw  new RuntimeException("Error during invoke SQL query");
+        }
+        finally {
+            closeDBResources(connection,preparedStatement);
+        }
+    }
+
+    @Override
+    public void setUserPhoto(int image, int cardId) {
+        String SQL = "update public.user set photo = ? where cardid = ?;";
+        Connection connection = initializeDataBaseConnection();
+        PreparedStatement preparedStatement = null;
+
+        try {
+            preparedStatement = connection.prepareStatement(SQL);
+            preparedStatement.setInt(1, image);
+            preparedStatement.setInt(2, cardId);
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
             System.err.println("Error during invoke SQL query: \n" + e.getMessage());
             throw  new RuntimeException("Error during invoke SQL query");
         }

@@ -1,6 +1,5 @@
 package admin;
 
-import librarian.Librarian;
 import user.IUserDBService;
 import user.User;
 import user.UserDBServiceImpl;
@@ -97,7 +96,7 @@ public class AdminDBServiceImpl implements IAdminDBService {
     @Override
     public List<Admin> getAllAdminsFromDB() {
         IUserDBService userDBService = new UserDBServiceImpl();
-        //List<User> userList = userDBService.getAllUsersFromDB();
+
         List<Admin> adminList = new ArrayList<>();
         Connection connection = initializeDataBaseConnection();
         PreparedStatement preparedStatement = null;

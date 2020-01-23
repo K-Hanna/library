@@ -30,18 +30,21 @@ public class AdminAddBookshelfPanel extends JPanel {
 
         alley = new JTextField();
         alley.setBounds(220,150,50,30);
+        alley.setToolTipText("1 wielka litera alfabetu łacińskiego.");
 
         bookstandLbl = new JLabel("Regał: ",SwingConstants.RIGHT);
         bookstandLbl.setBounds(270,150,50,30);
 
         bookstand = new JTextField();
         bookstand.setBounds(320,150,50,30);
+        bookstand.setToolTipText("1 mała litera alfabetu łacińskiego.");
 
         shelfLbl = new JLabel("Półka: ", SwingConstants.RIGHT);
         shelfLbl.setBounds(370,150,50,30);
 
         shelf = new JTextField();
         shelf.setBounds(420,150,50,30);
+        shelf.setToolTipText("1 cyfra.");
     }
 
     private void createButtons(){

@@ -47,7 +47,7 @@ public class EventEditPanel extends JPanel {
         editEventBtn.addActionListener(e -> {
             if (titleTxt.getText().equals("") || dateTxt.getText().equals("")  || shortDescTxt.getText().equals(""))
                 JOptionPane.showMessageDialog(this, "Proszę wypełnić wszystkie pola");
-            else if(Validation.checkIfDateOk(dateTxt.getText())== false)
+            else if(!Validation.checkIfDateOk(dateTxt.getText()))
                 JOptionPane.showMessageDialog(this, "Niepoprawna data");
             else {
                 int newPosterId;

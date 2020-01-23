@@ -14,4 +14,5 @@ public interface IUserDBService {
     List<User> getAllUsersFromDB();
     void updateUserInDB(int idUser, String firstName, String lastName, String email, String password, String streetBuilding, String postalCode, int cardNumber);
     int readLastUserIdFromDB();
+    void setUserPhoto(int image, int cardId);
 }

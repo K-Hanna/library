@@ -23,48 +23,36 @@ public class Validation {
     public static boolean checkUserExists(int cardId){
         IUserDBService userDBService = new UserDBServiceImpl();
         User user = userDBService.readUserFromDB(cardId);
-        if(user.getIdUser()!=0)
-            return true;
-        return false;
+        return user.getIdUser() != 0;
     }
 
     public static boolean checkPassOk(User user, String password){
-        if(user.getPassword().equals(password))
-            return true;
-        return false;
+        return user.getPassword().equals(password);
     }
 
     public static boolean checkIfReader(User user){
         IReaderDBService readerDBService = new ReaderDBServiceImpl();
         Reader reader = readerDBService.readReaderFromDB(user.getIdUser());
-        if(reader.getIdReader()!=0)
-            return true;
-        return false;
+        return reader.getIdReader() != 0;
     }
 
     public static boolean checkIfLibrarian(User user){
         ILibrarianDBService librarianDBService = new LibrarianDBServiceImpl();
         Librarian librarian = librarianDBService.readLibrarianFromDB(user.getCardNumber());
-        if(librarian.getIdLibrarian()!=0)
-            return true;
-        return false;
+        return librarian.getIdLibrarian() != 0;
     }
 
     public static boolean checkIfAdmin(User user){
         IAdminDBService adminDBService = new AdminDBServiceImpl();
         Admin admin = adminDBService.readAdminFromDB(user.getCardNumber());
-        if(admin.getIdAdmin()!=0)
-            return true;
-        return false;
+        return admin.getIdAdmin() != 0;
     }
 
     public static boolean checkIfInteger(String cardIdTxt) {
         String regex = "[+-]?[0-9][0-9]*";
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(cardIdTxt);
-        if (m.find() && m.group().equals(cardIdTxt))
-            return true;
-        return false;
+        return m.find() && m.group().equals(cardIdTxt);
     }
 
     public static boolean checkIfEmailOK(String email) {
@@ -74,10 +62,12 @@ public class Validation {
         return m.matches();
     }
 
+    public static boolean checkIfPhoneOK(String telephone) {
+        return Pattern.matches("[0-9]{9}",telephone);
+    }
+
     public static boolean checkIfPostalCodeOK(String cityName){
-        if(cityName.equals(""))
-            return false;
-        return true;
+        return !cityName.equals("");
     }
 
     private static final ThreadLocal<SimpleDateFormat> format = new ThreadLocal<SimpleDateFormat>() {
@@ -100,6 +90,4 @@ public class Validation {
             return false;
         }
     }
-
-
 }

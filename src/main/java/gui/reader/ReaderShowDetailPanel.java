@@ -3,11 +3,15 @@ package gui.reader;
 import city.CityDBServiceImpl;
 import city.ICityDBService;
 import gui.general.MyButton;
+import images.IPosterDBService;
+import images.Poster;
+import images.PosterDBServiceImpl;
 import user.IUserDBService;
 import user.User;
 import user.UserDBServiceImpl;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -16,11 +20,13 @@ public class ReaderShowDetailPanel extends JPanel {
     private JLabel firstNameLbl, lastNamelbl, emailLbl, passLbl, cardIdLbl, postalCodeLbl, cityNameLbl, streetAndBuildingLbl;
     private JTextField firstNameTxt, lastNameTxt, emailTxt, cardIdTxt, postalCodeTxt, cityNameTxt, streetAndBuildingTxt;
     private JTextField passField;
+    private JLabel photo;
     private MyButton cancel;
     private int fieldLength = 200, cardUser;
 
     private IUserDBService userDBService = new UserDBServiceImpl();
     private ICityDBService cityDBService = new CityDBServiceImpl();
+    private IPosterDBService posterDBService = new PosterDBServiceImpl();
 
     private User user;
 
@@ -54,7 +60,7 @@ public class ReaderShowDetailPanel extends JPanel {
 
         cancel = new MyButton(false);
         cancel.setText("Powrót");
-        cancel.setBounds(400, 20, 200, 30);
+        cancel.setBounds(400, 300, 200, 30);
 
     }
 
@@ -124,6 +130,16 @@ public class ReaderShowDetailPanel extends JPanel {
         passField.setText(user.getPassword());
         passField.setBounds(150, 300, fieldLength, 30);
 
+        photo = new JLabel();
+        photo.setBounds(400,20,200,200);
+        photo.setBorder(BorderFactory.createLineBorder(Color.black));
+
+        if(user.getPhoto() > 0) {
+            Poster posterId = posterDBService.readImageById(user.getPhoto());
+            ImageIcon icon = new ImageIcon(posterId.getImgBytes());
+            photo.setIcon(icon);
+        }
+
     }
 
     private void addComps() {
@@ -143,6 +159,7 @@ public class ReaderShowDetailPanel extends JPanel {
         add(streetAndBuildingTxt);
         add(passLbl);
         add(passField);
+        add(photo);
         add(cancel);
     }
 

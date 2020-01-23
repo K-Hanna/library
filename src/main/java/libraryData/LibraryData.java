@@ -2,7 +2,42 @@ package libraryData;
 
 public class LibraryData {
 
-    private String name, address, postalCode, city, openHours, openDays;
+    private String name, address, postalCode, city, openHours, openDays, eMail, info;
+    private int telephone;
+
+    public int getImage() {
+        return image;
+    }
+
+    public void setImage(int image) {
+        this.image = image;
+    }
+
+    private int image;
+
+    public String geteMail() {
+        return eMail;
+    }
+
+    public void seteMail(String eMail) {
+        this.eMail = eMail;
+    }
+
+    public int getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(int telephone) {
+        this.telephone = telephone;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
 
     public LibraryData(){}
 

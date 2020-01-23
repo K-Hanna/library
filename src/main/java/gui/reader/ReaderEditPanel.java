@@ -3,25 +3,37 @@ package gui.reader;
 import city.CityDBServiceImpl;
 import city.ICityDBService;
 import config.Validation;
+import gui.event.ImageFilter;
 import gui.general.MyButton;
+import images.IPosterDBService;
+import images.Poster;
+import images.PosterDBServiceImpl;
 import user.IUserDBService;
 import user.User;
 import user.UserDBServiceImpl;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.IOException;
 
 public class ReaderEditPanel extends JPanel {
 
     private JLabel firstNameLbl, lastNamelbl, emailLbl, passLbl, cardIdLbl, postalCodeLbl, cityNameLbl, streetAndBuildingLbl;
     private JTextField firstNameTxt, lastNameTxt, emailTxt, cardIdTxt, postalCodeTxt, cityNameTxt, streetAndBuildingTxt;
     private JPasswordField passField;
-    private MyButton edit, confirm, cancel;
+    private MyButton edit, confirm, cancel, getPhoto;
+    private JLabel photoLbl;
+    private JTextField photoPath;
+    private JFileChooser fileChooser;
     private int fieldLength = 200, idUser;
 
     private IUserDBService userDBService = new UserDBServiceImpl();
     private ICityDBService cityDBService = new CityDBServiceImpl();
+    private IPosterDBService posterDBService = new PosterDBServiceImpl();
 
     private User user;
 
@@ -60,22 +72,25 @@ public class ReaderEditPanel extends JPanel {
             setComponentsEditability(true);
             confirm.setVisible(true);
             edit.setVisible(false);
-            cancel.setText("Anuluj");
+            cancel.setVisible(true);
+            getPhoto.setVisible(true);
         });
 
         cancel.addActionListener(e ->{
             setComponentsEditability(false);
             setTextFields();
             confirm.setVisible(false);
+            cancel.setVisible(false);
             edit.setVisible(true);
+            getPhoto.setVisible(false);
         });
 
         confirm.addActionListener(e -> {
-            if(Validation.checkIfEmailOK(emailTxt.getText()) == false)
+            if(!Validation.checkIfEmailOK(emailTxt.getText()))
                 JOptionPane.showMessageDialog(this, "Niepoprawny email");
-            else if(Validation.checkIfPostalCodeOK(cityNameTxt.getText())==false)
+            else if(!Validation.checkIfPostalCodeOK(cityNameTxt.getText()))
                 JOptionPane.showMessageDialog(this, "Niepoprawny kod pocztowy");
-            else if(Validation.checkIfInteger(cardIdTxt.getText()) == false)
+            else if(!Validation.checkIfInteger(cardIdTxt.getText()))
                 JOptionPane.showMessageDialog(this, "Niepoprawny numer karty użytkownika");
             else if(firstNameTxt.getText().equals("") || lastNameTxt.getText().equals("")|| emailTxt.getText().equals("")||postalCodeTxt.getText().equals("")||streetAndBuildingTxt.getText().equals(""))
                 JOptionPane.showMessageDialog(this, "Proszę wypełnić wszystkie pola");
@@ -98,12 +113,39 @@ public class ReaderEditPanel extends JPanel {
                     userPass = pass.toString();
 
                 userDBService.updateUserInDB(userId, userFirstName, userLastName, userEmail, userPass, userSteetBuilding, userPostalCode, cardId);
+
+                if(!photoPath.getText().isEmpty()){
+                    posterDBService.addImage(getPhotoPath().getText());
+                    Poster posterForNewEvent = posterDBService.readLastImageFromDB();
+                    int newPosterId = posterForNewEvent.getIdImg();
+                    userDBService.setUserPhoto(newPosterId, cardId);
+                }
+
                 setComponentsEditability(false);
                 confirm.setVisible(false);
+                getPhoto.setVisible(false);
                 edit.setVisible(true);
-                cancel.setText("Powrót");
-                JOptionPane.showMessageDialog(this, "Dane użytkownika zaktualizowane poprawnie");
+                cancel.setVisible(false);
+                JOptionPane.showMessageDialog(this, "Dane użytkownika zaktualizowane poprawnie.");
             }
+        });
+
+        getPhoto.addActionListener(e -> {
+            fileChooser = new JFileChooser("C:\\Users\\e495405\\Desktop\\Baza danych zdjęcia\\biblio\\postery\\200_300");
+            fileChooser.addChoosableFileFilter(new ImageFilter());
+            fileChooser.setAcceptAllFileFilterUsed(false);
+            int r = fileChooser.showOpenDialog(this);
+            if(r == JFileChooser.APPROVE_OPTION){
+                getPhotoPath().setText(fileChooser.getSelectedFile().getAbsolutePath());
+                File file = new File(fileChooser.getSelectedFile().getAbsolutePath());
+                try {
+                    photoLbl.setIcon(new ImageIcon(ImageIO.read(file)));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            else
+                getPhotoPath().setText("");
         });
 
     }
@@ -113,15 +155,21 @@ public class ReaderEditPanel extends JPanel {
         confirm = new MyButton(true);
         confirm.setText("Aktualizuj dane");
         confirm.setVisible(false);
-        confirm.setBounds(400, 20, 200, 30);
+        confirm.setBounds(400, 300, 200, 30);
 
         cancel = new MyButton(false);
-        cancel.setText("Powrót");
-        cancel.setBounds(400, 60, 200, 30);
+        cancel.setText("Anuluj");
+        cancel.setBounds(400, 340, 200, 30);
+        cancel.setVisible(false);
 
         edit = new MyButton(true);
         edit.setText("Zmień dane");
-        edit.setBounds(400,20,200,30);
+        edit.setBounds(400,300,200,30);
+
+        getPhoto = new MyButton(true);
+        getPhoto.setText("Wybierz zdjęcie");
+        getPhoto.setBounds(400,230,200,30);
+        getPhoto.setVisible(false);
     }
 
     private void createFields(){
@@ -185,6 +233,19 @@ public class ReaderEditPanel extends JPanel {
         passField = new JPasswordField();
         passField.setBounds(150, 300, fieldLength, 30);
 
+        photoPath = new JTextField();
+        photoPath.setBounds(150,340,200,30);
+        photoPath.setVisible(false);
+
+        photoLbl = new JLabel();
+        photoLbl.setBounds(400,20,200,200);
+        photoLbl.setBorder(BorderFactory.createLineBorder(Color.black));
+
+        if(user.getPhoto() > 0) {
+            Poster posterId = posterDBService.readImageById(user.getPhoto());
+            ImageIcon icon = new ImageIcon(posterId.getImgBytes());
+            photoLbl.setIcon(icon);
+        }
     }
 
     private void setTextFields(){
@@ -217,6 +278,9 @@ public class ReaderEditPanel extends JPanel {
         add(edit);
         add(confirm);
         add(cancel);
+        add(photoPath);
+        add(photoLbl);
+        add(getPhoto);
     }
 
     private void setComponentsEditability(boolean editability) {
@@ -229,5 +293,9 @@ public class ReaderEditPanel extends JPanel {
     }
 
     public JTextField getCardIdTxt(){return cardIdTxt;}
+
+    public JTextField getPhotoPath(){
+        return photoPath;
+    }
 
 }

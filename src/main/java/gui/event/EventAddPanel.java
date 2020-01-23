@@ -41,9 +41,9 @@ public class EventAddPanel extends JPanel {
     private void actionAddEventBtn() {
         addEventBtn.addActionListener(e -> {
             if (titleTxt.getText().equals("") || dateTxt.getText().equals("") || posterTxt.getText().equals("") || shortDescTxt.getText().equals(""))
-                JOptionPane.showMessageDialog(this, "Proszę wypełnić wszystkie pola");
-            else if(Validation.checkIfDateOk(dateTxt.getText())== false)
-                JOptionPane.showMessageDialog(this, "Niepoprawna data");
+                JOptionPane.showMessageDialog(this, "Proszę wypełnić wszystkie pola.");
+            else if(!Validation.checkIfDateOk(dateTxt.getText()))
+                JOptionPane.showMessageDialog(this, "Niepoprawna data.");
             else {
                 posterDBService.addImage(getPosterTxt().getText());
                 Poster posterForNewEvent = posterDBService.readLastImageFromDB();
@@ -78,7 +78,6 @@ public class EventAddPanel extends JPanel {
             }
             else
                 getPosterTxt().setText("");
-
         });
     }
 
@@ -206,10 +205,6 @@ public class EventAddPanel extends JPanel {
 
     public JTextField getPosterTxt() {
         return posterTxt;
-    }
-
-    public void setPosterTxt(JTextField posterTxt) {
-        this.posterTxt = posterTxt;
     }
 
     public MyButton getCancel() {

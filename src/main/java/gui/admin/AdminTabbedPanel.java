@@ -1,12 +1,11 @@
 package gui.admin;
 
 import gui.general.BackgroundLabel;
-import gui.general.LibraryDataPanel;
+import gui.libraryinf.LibraryDataPanel;
 import gui.general.MyButton;
 import gui.librarian.LibrarianAddPanel;
 import gui.librarian.LibrarianGetPanel;
 import gui.librarian.LibrarianShowPanel;
-import gui.reader.ReadersShowAllPanel;
 
 import javax.swing.*;
 

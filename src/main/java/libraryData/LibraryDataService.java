@@ -24,12 +24,16 @@ public class LibraryDataService implements ILibraryData {
 
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()){
-                libraryData.setName(rs.getString(1));
-                libraryData.setAddress(rs.getString(2));
-                libraryData.setPostalCode(rs.getString(3));
-                libraryData.setCity(rs.getString(4));
-                libraryData.setOpenHours(rs.getString(5));
-                libraryData.setOpenDays(rs.getString(6));
+                libraryData.setName(rs.getString("library_name"));
+                libraryData.setAddress(rs.getString("address"));
+                libraryData.setPostalCode(rs.getString("postal_code"));
+                libraryData.setCity(rs.getString("city"));
+                libraryData.setOpenHours(rs.getString("open_hours"));
+                libraryData.setOpenDays(rs.getString("open_days"));
+                libraryData.seteMail(rs.getString("e_mail"));
+                libraryData.setTelephone(rs.getInt("telephone"));
+                libraryData.setInfo(rs.getString("info"));
+                libraryData.setImage(rs.getInt("image"));
             }
             return libraryData;
 
@@ -43,9 +47,11 @@ public class LibraryDataService implements ILibraryData {
     }
 
     @Override
-    public void updateLibraryDatas(String name, String address, String postalCode, String city, String openDays, String openHours) {
+    public void updateLibraryDatas(String name, String address, String postalCode, String city, String openHours,
+                                   String openDays, String eMail, int telephone, String info) {
 
-        String SQL = "update library_data set library_name = ?, address = ?, postal_code = ?, city = ?, open_days = ?, open_hours = ?;";
+        String SQL = "update library_data set library_name = ?, address = ?, postal_code = ?, city = ?, " +
+                "open_hours = ?, open_days = ?, e_mail = ?, telephone = ?, info = ?;";
         Connection connection = initializeDataBaseConnection();
         PreparedStatement preparedStatement = null;
 
@@ -55,8 +61,32 @@ public class LibraryDataService implements ILibraryData {
             preparedStatement.setString(2, address);
             preparedStatement.setString(3, postalCode);
             preparedStatement.setString(4, city);
-            preparedStatement.setString(5, openDays);
-            preparedStatement.setString(6,openHours);
+            preparedStatement.setString(5, openHours);
+            preparedStatement.setString(6,openDays);
+            preparedStatement.setString(7, eMail);
+            preparedStatement.setInt(8, telephone);
+            preparedStatement.setString(9, info);
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Error during invoke SQL query: \n" + e.getMessage());
+            throw  new RuntimeException("Error during invoke SQL query");
+        }
+        finally {
+            closeDBResources(connection,preparedStatement);
+        }
+    }
+
+    @Override
+    public void setLibraryImage(int image) {
+        String SQL = "update library_data set image = ?;";
+        Connection connection = initializeDataBaseConnection();
+        PreparedStatement preparedStatement = null;
+
+        try {
+            preparedStatement = connection.prepareStatement(SQL);
+            preparedStatement.setInt(1, image);
 
             preparedStatement.executeUpdate();
 

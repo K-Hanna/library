@@ -10,6 +10,16 @@ public class User {
     private String email;
     private String password;
     private int cardNumber;
+
+    public int getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(int photo) {
+        this.photo = photo;
+    }
+
+    private int photo;
     private String streetBuilding;
     private String postalCode;
 
