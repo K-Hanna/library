@@ -1,5 +1,5 @@
 # library
-Different acces depending on login and password. New reader is created in login panel.
+Different accesses depending on login and password. New reader can be added from login panel.
 ![login](https://github.com/K-Hanna/library/blob/master/src/main/resources/login.jpg)
 
 Admin can: edit datas of a library, CRUD librarians and other admins, add and remove bookshelves.
