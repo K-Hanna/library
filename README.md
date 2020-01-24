@@ -1,10 +1,12 @@
 # library
-Different acces depending on login and password. New reader is created in login panel
-
+Different acces depending on login and password. New reader is created in login panel.
 ![login](https://github.com/K-Hanna/library/blob/master/src/main/resources/login.jpg)
-![create](https://github.com/MartaDylewska/Hangman/blob/master/src/main/resources/create1.png)
-![guess](https://github.com/MartaDylewska/Hangman/blob/master/src/main/resources/guess1.png)
-![onewon](https://github.com/MartaDylewska/Hangman/blob/master/src/main/resources/won1.png)
-![onelost](https://github.com/MartaDylewska/Hangman/blob/master/src/main/resources/lost1.png)
-![result](https://github.com/MartaDylewska/Hangman/blob/master/src/main/resources/finish1.png)
-![result](https://github.com/MartaDylewska/Hangman/blob/master/src/main/resources/finish2.png)
+
+Admin can: edit datas of a library, CRUD librarians and other admins, add and remove bookshelves.
+![admin](https://github.com/K-Hanna/library/blob/master/src/main/resources/admin.jpg)
+
+Librarian can: CRUD books (few searching options), authors, and events, search, see details of reader and reserved and lent books. 
+![librarian](https://github.com/K-Hanna/library/blob/master/src/main/resources/librarian.jpg)
+
+Reader can: view and edit profile, search, reserve and resign books, join and unjoin events, see library data.
+![reader](https://github.com/K-Hanna/library/blob/master/src/main/resources/reader.jpg)
