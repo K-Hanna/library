@@ -27,19 +27,23 @@ public class ReaderAddPanel  extends JPanel {
     private MyButton addReaderBtn, returnBtn;
     private int fieldLength = 200;
     private String message;
-    private JCheckBox notRobot;
+    private JTextField result;
+    private JLabel count;
+
+    private int a, b;
 
     private IUserDBService userDBService = new UserDBServiceImpl();
-    private ICardDBService cardDBService = new CardDBServiceImpl();
     private ICityDBService cityDBService = new CityDBServiceImpl();
     private IReaderDBService readerDBService = new ReaderDBServiceImpl();
 
     public ReaderAddPanel(){
         setLayout(null);
+
+        a = (int) (Math.random() * 10);
+        b = (int) (Math.random() * 10);
+
         createAllLabels();
-        createNotRobot();
         addAllLabels();
-        setCompVisibility(true);
         cardIdTxt.setVisible(false);
         cardIdLbl.setVisible(false);
         createReturnBtn();
@@ -93,7 +97,7 @@ public class ReaderAddPanel  extends JPanel {
                 int idNewReader = userDBService.readUserFromDB(cardForNewUser.getIdCard()).getIdUser();
                 readerDBService.addReaderInDB(idNewReader);
                 JOptionPane.showMessageDialog(this, "Nowy czytelnik został dodany do bazy \nNumer karty: " + cardForNewUser.getIdCard());
-                setComponentsEditability(false);
+                setComponentsEditability();
                 cardIdTxt.setEditable(false);
             }
         });
@@ -128,7 +132,8 @@ public class ReaderAddPanel  extends JPanel {
         add(streetAndBuildingTxt);
         add(passLbl);
         add(passField);
-        add(notRobot);
+        add(count);
+        add(result);
     }
 
     private void createAllLabels() {
@@ -148,6 +153,7 @@ public class ReaderAddPanel  extends JPanel {
         createStreetAndBuildingTxt();
         createPassLbl();
         createPassTxt();
+        createCaptcha();
     }
 
     private void createPassLbl() {
@@ -242,38 +248,27 @@ public class ReaderAddPanel  extends JPanel {
         cardIdTxt.setBounds(300, 20, fieldLength, 30);
     }
 
-    private void setCompVisibility(boolean visibility) {
-        firstNameLbl.setVisible(visibility);
-        lastNamelbl.setVisible(visibility);
-        emailLbl.setVisible(visibility);
-        postalCodeLbl.setVisible(visibility);
-        cityNameLbl.setVisible(visibility);
-        streetAndBuildingLbl.setVisible(visibility);
-        firstNameTxt.setVisible(visibility);
-        lastNameTxt.setVisible(visibility);
-        emailTxt.setVisible(visibility);
-        passField.setVisible(visibility);
-        passLbl.setVisible(visibility);
-        postalCodeTxt.setVisible(visibility);
-        cityNameTxt.setVisible(visibility);
-        streetAndBuildingTxt.setVisible(visibility);
+    private void setComponentsEditability() {
+
+        firstNameTxt.setEditable(false);
+        lastNameTxt.setEditable(false);
+        emailTxt.setEditable(false);
+        passField.setEditable(false);
+        cardIdTxt.setEditable(false);
+        postalCodeTxt.setEditable(false);
+        cityNameTxt.setEditable(false);
+        streetAndBuildingTxt.setEditable(false);
+        result.setEditable(false);
     }
 
-    private void setComponentsEditability(boolean editability) {
+    private void createCaptcha(){
 
-        firstNameTxt.setEditable(editability);
-        lastNameTxt.setEditable(editability);
-        emailTxt.setEditable(editability);
-        passField.setEditable(editability);
-        cardIdTxt.setEditable(editability);
-        postalCodeTxt.setEditable(editability);
-        cityNameTxt.setEditable(editability);
-        streetAndBuildingTxt.setEditable(editability);
-    }
+        count = new JLabel(a +" + " + b);
+        count.setBounds(200,340,100,30);
 
-    private void createNotRobot(){
-        notRobot = new JCheckBox("Nie jestem robotem");
-        notRobot.setBounds(300, 340, 150, 30);
+        result = new JTextField();
+        result.setBounds(300,340,100,30);
+
     }
 
     private void createBackground(){
@@ -291,7 +286,7 @@ public class ReaderAddPanel  extends JPanel {
 
     private boolean check(){
 
-        message = "Nieprawidłowo wypełnione pola";
+        message = "Nieprawidłowo wypełnione pola:";
 
         boolean emailCorrect = Validation.checkIfEmailOK(emailTxt.getText());
         if(!emailCorrect)
@@ -301,9 +296,24 @@ public class ReaderAddPanel  extends JPanel {
             message = message + "\n- nieprawidłowy kod pocztowy";
         boolean empty = firstNameTxt.getText().equals("") || lastNameTxt.getText().equals("") || emailTxt.getText().equals("") || postalCodeTxt.getText().equals("") || streetAndBuildingTxt.getText().equals("");
         if(empty)
-            message = message + "\n- brakujące dane.";
+            message = message + "\n- brakujące dane";
 
-        return emailCorrect && postalCorrect && !empty && notRobot.isSelected();
+        if(!captcha())
+            message = message + "\n- brakujące lub niepoprawne captcha.";
+
+        return emailCorrect && postalCorrect && !empty && captcha();
+    }
+
+    private boolean captcha(){
+
+        if(result.getText().isEmpty())
+            return false;
+
+        if(result.getText().matches("[0-9]+")){
+            return Integer.parseInt(result.getText()) == a + b;
+        } else {
+            return false;
+        }
     }
 
     public MyButton getReturnBtn() {
