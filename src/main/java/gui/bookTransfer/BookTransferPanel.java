@@ -16,13 +16,14 @@ import user.UserDBServiceImpl;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class BookTransferPanel extends JPanel {
+import static java.time.LocalDate.*;
 
-    private IBookTransfer bookTransfer = new BookTransferService();
+public class BookTransferPanel extends JPanel {
 
     private JLabel userIdLabel, lentBooksLabel, reservedBooksLabel;
     private JTextField userId;
@@ -33,6 +34,7 @@ public class BookTransferPanel extends JPanel {
     private IReaderDBService readerDBService = new ReaderDBServiceImpl();
     private IUserDBService userDBService = new UserDBServiceImpl();
     private IBook bookService = new BookService();
+    private IBookTransfer bookTransfer = new BookTransferService();
 
     private int readerId;
 

@@ -49,42 +49,6 @@ public class BookService implements IBook {
     }
 
     @Override
-    public Book getBook(String title) {
-        Book book = null;
-        Connection connection = initializeDataBaseConnection();
-        PreparedStatement preparedStatement = null;
-
-        SQL = "select * from book inner join bookshelves on bookshelves.bookshelf_id = book.bookshelf_id where title = ? ;";
-
-        try {
-            preparedStatement = connection.prepareStatement(SQL);
-
-            preparedStatement.setString(1, title);
-
-            ResultSet rs = preparedStatement.executeQuery();
-            while (rs.next()){
-                book = new Book();
-                Bookshelf bookshelf = new Bookshelf(rs.getString("alley"), rs.getString("bookstand"), rs.getInt("shelf"));
-                book.setTitle(rs.getString("title"));
-                book.setBookshelf(bookshelf);
-                book.setPublisher(rs.getString("publisher"));
-                book.setLanguage(rs.getString("lang"));
-                book.setGenre(rs.getString("genre"));
-                book.setISBN(rs.getLong("isbn"));
-                book.setBookId(rs.getInt("book_id"));
-                book.setAvailable(rs.getBoolean("available"));
-            }
-            return book;
-        } catch (SQLException e) {
-            System.err.println("Error during invoke SQL query: \n" + e.getMessage());
-            throw  new RuntimeException("Error during invoke SQL query");
-        }
-        finally {
-            closeDBResources(connection,preparedStatement);
-        }
-    }
-
-    @Override
     public Book getNullBook(int idBook) {
         Book book = null;
         Connection connection = initializeDataBaseConnection();

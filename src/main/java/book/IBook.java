@@ -4,7 +4,6 @@ public interface IBook {
 
     Book getBook(int id);
     Book getNullBook(int id);
-    Book getBook(String title);
     int getBookId(String title);
     void addBook(String title, String genre, String publisher, String language,String alley, String bookstand, int shelf);
     void removeBook(int id);

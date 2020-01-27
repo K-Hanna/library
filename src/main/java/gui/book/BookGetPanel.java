@@ -6,10 +6,12 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import book.*;
+import bookTransfer.BookTransfer;
 import bookTransfer.BookTransferService;
 import bookTransfer.IBookTransfer;
 import gui.general.MyButton;
@@ -39,6 +41,24 @@ public class BookGetPanel extends JPanel {
     private IBook bookService = new BookService();
 
     public BookGetPanel() {
+
+        List<BookTransfer> reservedBooks = bookTransfer.getAllReservedBooks();
+        List<BookTransfer> lentBooks = bookTransfer.getAllLentBooks();
+
+        for(BookTransfer book : reservedBooks){
+            if(book.getDuedate().before(new Date())){
+                bookTransfer.unReserveBook(book.getBook_id());
+            }
+        }
+
+        for(BookTransfer book : lentBooks){
+            if(book.getDuedate().before(new Date())){
+                int userId = readerDBService.getUserId(book.getReader_id());
+                User user = userDBService.readUserFromDBById(userId);
+                JOptionPane.showMessageDialog(this, book.getAuthorBook() +
+                        " jest przetrzymana u: " + user.toString());
+            }
+        }
 
         setLayout(null);
 

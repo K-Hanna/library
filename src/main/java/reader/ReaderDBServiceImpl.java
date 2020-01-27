@@ -1,8 +1,6 @@
 package reader;
 
-import user.IUserDBService;
 import user.User;
-import user.UserDBServiceImpl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -252,6 +250,32 @@ public class ReaderDBServiceImpl implements IReaderDBService {
         }
         finally {
             closeDBResources(connection,preparedStatement);
+        }
+    }
+
+    @Override
+    public int getUserId(int readerId) {
+
+        Connection connection = initializeDataBaseConnection();
+        PreparedStatement preparedStatement = null;
+
+        int userId = 0;
+
+        try {
+            String queryReadReader = "SELECT * FROM reader WHERE (idreader) = (?) ";
+            preparedStatement = connection.prepareStatement(queryReadReader);
+            preparedStatement.setInt(1, readerId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                userId = resultSet.getInt("userid");
+            }
+            return userId;
+        } catch (SQLException e) {
+            System.err.println("Error during invoke SQL query: \n" + e.getMessage());
+            throw new RuntimeException("Error during invoke SQL query");
+        } finally {
+            closeDBResources(connection, preparedStatement);
         }
     }
 }

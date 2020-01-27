@@ -13,4 +13,5 @@ public interface IReaderDBService {
     List<User> readReadersFromDB(int idCard);
     List<User> readReadersFromDB(String name);
     List<User> readReadersFromDB(String firstName, String lastName);
+    int getUserId(int readerId);
 }

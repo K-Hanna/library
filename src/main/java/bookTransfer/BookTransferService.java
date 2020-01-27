@@ -13,17 +13,67 @@ import static config.DBConfig.initializeDataBaseConnection;
 public class BookTransferService implements IBookTransfer {
 
     private String SQL, message;
-    private IBook bookService = new BookService();
 
     @Override
     public List<BookTransfer> getReservedUserBooks(int userId) {
-        List<BookTransfer> usersBooks = new ArrayList<>();
 
+        List<BookTransfer> reservedBooks = new ArrayList<>();
         Connection connection = initializeDataBaseConnection();
         PreparedStatement preparedStatement = null;
 
         SQL = "select * from reservation inner join book on reservation.book_id = book.book_id " +
                 "inner join author_book on reservation.book_id = author_book.book_id " +
+                "inner join author on author.author_id = author_book.author_id " +
+                "inner join bookshelves on book.bookshelf_id = bookshelves.bookshelf_id " +
+                "where reader_id = ? order by title;";
+
+        try  {
+            preparedStatement = connection.prepareStatement(SQL);
+
+            preparedStatement.setInt(1, userId);
+
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while (rs.next()) {
+                Book book = new Book();
+                Author author = new Author();
+                Bookshelf bookshelf = new Bookshelf(rs.getString("alley"), rs.getString("bookstand"), rs.getInt("shelf"));
+                book.setBookshelf(bookshelf);
+                author.setFirstName(rs.getString("first_name"));
+                author.setLastName(rs.getString("last_name"));
+                author.setAuthorId(rs.getInt("author_id"));
+                book.setTitle(rs.getString("title"));
+                book.setPublisher(rs.getString("publisher"));
+                book.setLanguage(rs.getString("lang"));
+                book.setGenre(rs.getString("genre"));
+                book.setISBN(rs.getLong("isbn"));
+                book.setBookId(rs.getInt("book_id"));
+                AuthorBook authorBook = new AuthorBook();
+                authorBook.setBook(book);
+                authorBook.setAuthor(author);
+                BookTransfer bookTransfer = new BookTransfer();
+                bookTransfer.setAuthorBook(authorBook);
+                bookTransfer.setDuedate(rs.getDate("duedate"));
+                reservedBooks.add(bookTransfer);
+            } return reservedBooks;
+        } catch (SQLException e) {
+            System.err.println("Error during invoke SQL query: \n" + e.getMessage());
+            throw  new RuntimeException("Error during invoke SQL query");
+        }
+        finally {
+            closeDBResources(connection,preparedStatement);
+        }
+    }
+
+    @Override
+    public List<BookTransfer> getLentUserBooks(int userId) {
+        List<BookTransfer> usersBooks = new ArrayList<>();
+
+        Connection connection = initializeDataBaseConnection();
+        PreparedStatement preparedStatement = null;
+
+        SQL = "select * from lending inner join book on lending.book_id = book.book_id " +
+                "inner join author_book on lending.book_id = author_book.book_id " +
                 "inner join author on author.author_id = author_book.author_id " +
                 "inner join bookshelves on book.bookshelf_id = bookshelves.bookshelf_id " +
                 "where reader_id = ? order by title;";
@@ -67,23 +117,67 @@ public class BookTransferService implements IBookTransfer {
     }
 
     @Override
-    public List<BookTransfer> getLentUserBooks(int userId) {
-        List<BookTransfer> usersBooks = new ArrayList<>();
+    public List<BookTransfer> getAllLentBooks() {
 
+        List<BookTransfer> lentBooks = new ArrayList<>();
         Connection connection = initializeDataBaseConnection();
         PreparedStatement preparedStatement = null;
 
         SQL = "select * from lending inner join book on lending.book_id = book.book_id " +
                 "inner join author_book on lending.book_id = author_book.book_id " +
                 "inner join author on author.author_id = author_book.author_id " +
-                "inner join bookshelves on book.bookshelf_id = bookshelves.bookshelf_id " +
-                "where reader_id = ? order by title;";
+                "inner join bookshelves on book.bookshelf_id = bookshelves.bookshelf_id;";
 
         try  {
             preparedStatement = connection.prepareStatement(SQL);
+            ResultSet rs = preparedStatement.executeQuery();
 
-            preparedStatement.setInt(1, userId);
+            while (rs.next()) {
+                Book book = new Book();
+                Author author = new Author();
+                Bookshelf bookshelf = new Bookshelf(rs.getString("alley"), rs.getString("bookstand"), rs.getInt("shelf"));
+                book.setBookshelf(bookshelf);
+                author.setFirstName(rs.getString("first_name"));
+                author.setLastName(rs.getString("last_name"));
+                author.setAuthorId(rs.getInt("author_id"));
+                book.setTitle(rs.getString("title"));
+                book.setPublisher(rs.getString("publisher"));
+                book.setLanguage(rs.getString("lang"));
+                book.setGenre(rs.getString("genre"));
+                book.setISBN(rs.getLong("isbn"));
+                book.setBookId(rs.getInt("book_id"));
+                AuthorBook authorBook = new AuthorBook();
+                authorBook.setBook(book);
+                authorBook.setAuthor(author);
+                BookTransfer bookTransfer = new BookTransfer();
+                bookTransfer.setAuthorBook(authorBook);
+                bookTransfer.setDuedate(rs.getDate("duedate"));
+                bookTransfer.setReader_id(rs.getInt("reader_id"));
+                lentBooks.add(bookTransfer);
+            } return lentBooks;
+        } catch (SQLException e) {
+            System.err.println("Error during invoke SQL query: \n" + e.getMessage());
+            throw  new RuntimeException("Error during invoke SQL query");
+        }
+        finally {
+            closeDBResources(connection,preparedStatement);
+        }
+    }
 
+    @Override
+    public List<BookTransfer> getAllReservedBooks() {
+
+        List<BookTransfer> usersBooks = new ArrayList<>();
+        Connection connection = initializeDataBaseConnection();
+        PreparedStatement preparedStatement = null;
+
+        SQL = "select * from reservation inner join book on reservation.book_id = book.book_id " +
+                "inner join author_book on reservation.book_id = author_book.book_id " +
+                "inner join author on author.author_id = author_book.author_id " +
+                "inner join bookshelves on book.bookshelf_id = bookshelves.bookshelf_id; ";
+
+        try  {
+            preparedStatement = connection.prepareStatement(SQL);
             ResultSet rs = preparedStatement.executeQuery();
 
             while (rs.next()) {
