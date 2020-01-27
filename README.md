@@ -10,3 +10,6 @@ Librarian can: CRUD books (few searching options), authors, and events, search, 
 
 Reader can: view and edit profile, search, reserve and resign books, join and unjoin events, see library data.
 ![reader](https://github.com/K-Hanna/library/blob/master/src/main/resources/reader.jpg)
+
+Databases relations diagram:
+![uml](https://github.com/K-Hanna/library/blob/master/src/main/resources/uml.jpg)
