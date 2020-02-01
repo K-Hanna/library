@@ -17,13 +17,13 @@ import java.io.IOException;
 import java.time.LocalDate;
 
 public class EventEditPanel extends JPanel {
-    private JLabel titleLbl, dateLbl, shortDescLbl, posterShowLbl;
-    private JTextField titleTxt, dateTxt, posterTxt;
+    private JLabel titleLbl, dateLbl, shortDescLbl, posterShowLbl, partLbl;
+    private JTextField titleTxt, dateTxt, posterTxt, partTxt;
     private JTextArea shortDescTxt;
-    private MyButton editEventBtn, browsePosterBtn, cancel;
+    private MyButton confirm, browsePosterBtn, cancel, edit;
     private int fieldLength = 200;
     private JFileChooser fileChooser;
-    private int eventToEdit;
+    private int eventToEdit, participants;
     private Event event;
 
     private IPosterDBService posterDBService = new PosterDBServiceImpl();
@@ -33,18 +33,22 @@ public class EventEditPanel extends JPanel {
 
         this.eventToEdit = eventGetPanel.getEventIdToEdit();
         event = eventDBService.readEvent(eventToEdit);
+        participants = eventDBService.getParticipants(eventToEdit);
 
         setLayout(null);
         createAllLabels();
         addAllLabels();
         createAllButtons();
+        confirm.setVisible(false);
         addAllButtons();
         addActionBrowsePosterBtn();
         actionAddEventBtn();
+        addActionEditBtn();
+        setComponentsEditability(false);
     }
 
     private void actionAddEventBtn() {
-        editEventBtn.addActionListener(e -> {
+        confirm.addActionListener(e -> {
             if (titleTxt.getText().equals("") || dateTxt.getText().equals("")  || shortDescTxt.getText().equals(""))
                 JOptionPane.showMessageDialog(this, "Proszę wypełnić wszystkie pola");
             else if(!Validation.checkIfDateOk(dateTxt.getText()))
@@ -87,16 +91,27 @@ public class EventEditPanel extends JPanel {
         });
     }
 
+    private void addActionEditBtn(){
+        edit.addActionListener( e->{
+            confirm.setVisible(true);
+            setComponentsEditability(true);
+            edit.setVisible(false);
+            cancel.setText("Anuluj");
+        });
+    }
+
     private void addAllButtons() {
-        add(editEventBtn);
+        add(confirm);
         add(browsePosterBtn);
         add(cancel);
+        add(edit);
     }
 
     private void createAllButtons(){
         createAddBtn();
         createBrowseBtn();
         createDeleteBtn();
+        createEditBtn();
     }
 
     private void createBrowseBtn() {
@@ -112,9 +127,27 @@ public class EventEditPanel extends JPanel {
     }
 
     private void createAddBtn() {
-        editEventBtn = new MyButton(true);
-        editEventBtn.setText("Wprowadź dane");
-        editEventBtn.setBounds(150, 330, 200, 30);
+        confirm = new MyButton(true);
+        confirm.setText("Wprowadź dane");
+        confirm.setBounds(150, 330, 200, 30);
+    }
+
+    private void createEditBtn(){
+        edit = new MyButton(true);
+        edit.setText("Edytuj");
+        edit.setBounds(150, 330, 200, 30);
+    }
+
+    private void createParticipants(){
+
+        partLbl = new JLabel();
+        partLbl.setText("Uczestników:");
+        partLbl.setBounds(50, 210, 100, 30);
+
+        partTxt = new JTextField();
+        partTxt.setText(String.valueOf(participants));
+        partTxt.setBounds(150,210,200,30);
+        partTxt.setEditable(false);
     }
 
     private void addAllLabels() {
@@ -126,6 +159,8 @@ public class EventEditPanel extends JPanel {
         add(posterShowLbl);
         add(shortDescLbl);
         add(shortDescTxt);
+        add(partLbl);
+        add(partTxt);
     }
 
     private void createAllLabels() {
@@ -137,6 +172,7 @@ public class EventEditPanel extends JPanel {
         createPosterTxt();
         createShortDescLbl();
         createShortDescTxt();
+        createParticipants();
     }
 
     private void createShortDescLbl() {
@@ -166,7 +202,7 @@ public class EventEditPanel extends JPanel {
     private void createPosterTxt() {
         posterTxt = new JTextField();
         posterTxt.setBounds(400, 370, fieldLength, 30);
-        posterTxt.setEditable(false);
+        posterTxt.setVisible(false);
     }
 
     private void createDateLbl() {

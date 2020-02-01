@@ -164,7 +164,7 @@ public class EventAddPanel extends JPanel {
     private void createPosterTxt() {
         posterTxt = new JTextField();
         posterTxt.setBounds(400, 370, fieldLength, 30);
-        posterTxt.setEditable(false);
+        posterTxt.setVisible(false);
     }
 
     private void createPosterShowLbl() {

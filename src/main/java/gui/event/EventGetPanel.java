@@ -75,7 +75,7 @@ public class EventGetPanel extends JPanel {
         remove.setBounds(400,60,200,30);
 
         edit = new MyButton(true);
-        edit.setText("Edytuj");
+        edit.setText("Pokaż");
         edit.setBounds(400,100,200,30);
 
         create = new MyButton(true);

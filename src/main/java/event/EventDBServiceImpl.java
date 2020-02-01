@@ -283,4 +283,31 @@ public class EventDBServiceImpl implements IEventDBService {
             closeDBResources(connection,preparedStatement);
         }
     }
+
+    @Override
+    public int getParticipants(int idEvent) {
+        Connection connection = initializeDataBaseConnection();
+        PreparedStatement preparedStatement = null;
+
+        int participants = 0;
+
+        try {
+            String queryReadEvent = "SELECT COUNT (eventid) AS total FROM event_reader WHERE (eventid) = (?);";
+            preparedStatement = connection.prepareStatement(queryReadEvent);
+            preparedStatement.setInt(1,idEvent);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()){
+                participants = resultSet.getInt("total"); // or (1);
+            }
+            return participants;
+        }
+        catch (SQLException e){
+            System.err.println("Error during invoke SQL query: \n" + e.getMessage());
+            throw new RuntimeException("Error during invoke SQL query");
+        }
+        finally {
+            closeDBResources(connection,preparedStatement);
+        }
+    }
 }

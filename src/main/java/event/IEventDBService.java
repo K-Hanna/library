@@ -14,4 +14,5 @@ public interface IEventDBService {
     List<Event> getAllEventsFromDB();
     List<Event> getAllEventsForUser(int readerId);
     void updateEventInDB(int idEvent, String title, LocalDate dateEvent, int imgId, String shortDescription);
+    int getParticipants(int idEvent);
 }
