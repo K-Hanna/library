@@ -4,10 +4,14 @@ import config.Validation;
 import event.Event;
 import event.EventDBServiceImpl;
 import event.IEventDBService;
+import gui.general.DateLabelFormatter;
 import gui.general.MyButton;
 import images.IPosterDBService;
 import images.Poster;
 import images.PosterDBServiceImpl;
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -15,15 +19,17 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Properties;
 
 public class EventEditPanel extends JPanel {
     private JLabel titleLbl, dateLbl, shortDescLbl, posterShowLbl, partLbl;
-    private JTextField titleTxt, dateTxt, posterTxt, partTxt;
+    private JTextField titleTxt, posterTxt, partTxt;
     private JTextArea shortDescTxt;
     private MyButton confirm, browsePosterBtn, cancel, edit;
     private int fieldLength = 200;
     private JFileChooser fileChooser;
     private int eventToEdit, participants;
+    private JDatePickerImpl datePicker;
     private Event event;
 
     private IPosterDBService posterDBService = new PosterDBServiceImpl();
@@ -49,10 +55,8 @@ public class EventEditPanel extends JPanel {
 
     private void actionAddEventBtn() {
         confirm.addActionListener(e -> {
-            if (titleTxt.getText().equals("") || dateTxt.getText().equals("")  || shortDescTxt.getText().equals(""))
+            if (titleTxt.getText().equals("") || datePicker.getJFormattedTextField().getText().equals("") || shortDescTxt.getText().equals(""))
                 JOptionPane.showMessageDialog(this, "Proszę wypełnić wszystkie pola");
-            else if(!Validation.checkIfDateOk(dateTxt.getText()))
-                JOptionPane.showMessageDialog(this, "Niepoprawna data");
             else {
                 int newPosterId;
 
@@ -64,7 +68,7 @@ public class EventEditPanel extends JPanel {
                     newPosterId = posterForNewEvent.getIdImg();
                 }
 
-                eventDBService.updateEventInDB(eventToEdit, titleTxt.getText(), LocalDate.parse(dateTxt.getText()), newPosterId, shortDescTxt.getText());
+                eventDBService.updateEventInDB(eventToEdit, titleTxt.getText(), LocalDate.parse(datePicker.getJFormattedTextField().getText()), newPosterId, shortDescTxt.getText());
                 JOptionPane.showMessageDialog(this, "Wydarzenie zedytowane");
                 setComponentsEditability(false);
             }
@@ -112,6 +116,7 @@ public class EventEditPanel extends JPanel {
         createBrowseBtn();
         createDeleteBtn();
         createEditBtn();
+        createDatePicker();
     }
 
     private void createBrowseBtn() {
@@ -154,7 +159,6 @@ public class EventEditPanel extends JPanel {
         add(titleLbl);
         add(titleTxt);
         add(dateLbl);
-        add(dateTxt);
         add(posterTxt);
         add(posterShowLbl);
         add(shortDescLbl);
@@ -167,12 +171,24 @@ public class EventEditPanel extends JPanel {
         createTitleLbl();
         createTitleTxt();
         createDateLbl();
-        createDateTxt();
         createPosterShowLbl();
         createPosterTxt();
         createShortDescLbl();
         createShortDescTxt();
         createParticipants();
+    }
+
+    private void createDatePicker(){
+        UtilDateModel model = new UtilDateModel();
+        Properties p = new Properties();
+        p.put("text.today", "Today");
+        p.put("text.month", "Month");
+        p.put("text.year", "Year");
+        JDatePanelImpl datePanel = new JDatePanelImpl(model,p);
+        datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+        datePicker.getJFormattedTextField().setText(event.getDateEvent().toString());
+        datePicker.setBounds(150, 60, fieldLength,30);
+        add(datePicker);
     }
 
     private void createShortDescLbl() {
@@ -211,12 +227,6 @@ public class EventEditPanel extends JPanel {
         dateLbl.setBounds(50, 60, 100, 30);
     }
 
-    private void createDateTxt() {
-        dateTxt = new JTextField();
-        dateTxt.setText(event.getDateEvent().toString());
-        dateTxt.setBounds(150, 60, fieldLength, 30);
-    }
-
     private void createTitleLbl() {
         titleLbl = new JLabel();
         titleLbl.setText("Tytuł");
@@ -231,9 +241,9 @@ public class EventEditPanel extends JPanel {
 
     private void setComponentsEditability(boolean editability) {
         titleTxt.setEditable(editability);
-        dateTxt.setEditable(editability);
         posterTxt.setEditable(editability);
         shortDescTxt.setEditable(editability);
+        datePicker.getComponent(1).setEnabled(editability);
     }
 
     public JTextField getPosterTxt() {
