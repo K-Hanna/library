@@ -48,6 +48,7 @@ public class BookGetPanel extends JPanel {
         for(BookTransfer book : reservedBooks){
             if(book.getDuedate().before(new Date())){
                 bookTransfer.unReserveBook(book.getBook_id());
+                bookService.setBookAvailability(book.getBook_id(), true);
             }
         }
 

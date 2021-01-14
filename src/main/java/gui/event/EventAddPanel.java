@@ -1,6 +1,5 @@
 package gui.event;
 
-import config.Validation;
 import event.Event;
 import event.EventDBServiceImpl;
 import event.IEventDBService;
@@ -18,12 +17,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Properties;
 
 public class EventAddPanel extends JPanel {
