@@ -1,9 +1,9 @@
 # library
 
-sample login:
-Reader: 150035, aa
-Librarian: 150047, aa
-Admin: 150045, aa
+sample login:<br>
+Reader: 150035, aa<br>
+Librarian: 150047, aa<br>
+Admin: 150045, aa<br>
 
 Different accesses depending on login and password. New reader can be added from login panel.
 ![login](https://github.com/K-Hanna/library/blob/master/src/main/resources/login.jpg)
